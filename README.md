@@ -25,4 +25,4 @@ Or just run it.
 
 ## License
 
-See [the license file](LICENSE.md).
+Project licensed under GNU GPLv3.0 license. See [the license file](LICENSE.md) for details.

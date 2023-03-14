@@ -6,3 +6,6 @@ build:
 
 dependencies:
 	go mod download
+
+test:
+	go test -v ./...

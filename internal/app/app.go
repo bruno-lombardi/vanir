@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 	"vanir/internal/pkg/config"
+	"vanir/internal/pkg/data/db"
 	"vanir/internal/pkg/helpers"
 
 	"github.com/labstack/echo/v4"
@@ -15,6 +16,7 @@ import (
 
 func Run(configPath string) {
 	config.Setup(configPath)
+	db.SetupDB()
 	conf := config.GetConfig()
 	e := echo.New()
 	e.Validator = helpers.NewCustomValidator()

@@ -1,6 +1,6 @@
 database:
   driver: "sqlite"
-  dbname: "vanir"
+  dbname: "vanir.db"
   username: "bruno"
   password: "123456"
   host: "localhost"

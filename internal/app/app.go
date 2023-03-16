@@ -2,10 +2,12 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+	"vanir/internal/app/router"
 	"vanir/internal/pkg/config"
 	"vanir/internal/pkg/data/db"
 	"vanir/internal/pkg/helpers"
@@ -14,8 +16,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func Run(configPath string) {
-	config.Setup(configPath)
+func Run() {
+	config.Setup()
 	db.SetupDB()
 	conf := config.GetConfig()
 	e := echo.New()
@@ -27,6 +29,12 @@ func Run(configPath string) {
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		DisablePrintStack: true,
 	}))
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		fmt.Println(c.Path(), c.QueryParams(), err)
+		e.DefaultHTTPErrorHandler(err, c)
+	}
+	apiV1 := e.Group("/v1")
+	router.SetupRootRouter(apiV1)
 
 	go func() {
 		if err := e.Start(":" + conf.Server.Port); err != nil && err != http.ErrServerClosed {

@@ -31,6 +31,15 @@ func GetUserRepository() *UserRepository {
 	return userRepository
 }
 
+func (r *UserRepository) Get(ID string) (*UserEntity, error) {
+	user := &UserEntity{}
+	result := r.db.Where("id = ?", ID).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
+}
+
 func (r *UserRepository) Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error) {
 	user := &UserEntity{
 		ID:       helpers.ID("u"),

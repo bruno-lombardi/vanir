@@ -1,9 +1,11 @@
 package services
 
 import (
+	"fmt"
 	"vanir/internal/pkg/crypto"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/data/repositories"
+	"vanir/internal/pkg/protocols"
 )
 
 type UserService struct {
@@ -39,20 +41,31 @@ func (u *UserService) Create(createUserDTO *models.CreateUserDTO) (*models.User,
 }
 
 func (u *UserService) Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error) {
-	// TODO: Validate user current password is current
-
-	// TODO: Confirm new password is equal confirmation
-	updateUserDTO.NewPassword = crypto.HashAndSalt([]byte(updateUserDTO.NewPassword))
-	user, err := u.userRepository.Update(updateUserDTO)
-
+	user, err := u.userRepository.Get(updateUserDTO.ID)
 	if err != nil {
 		return nil, err
-	} else {
-		return &models.User{
-			ID:       user.ID,
-			Email:    user.Email,
-			Name:     user.Name,
-			Password: user.Password,
-		}, nil
 	}
+
+	isCompareSuccessful := crypto.CompareHashes(user.Password, []byte(updateUserDTO.CurrentPassword))
+
+	if !isCompareSuccessful {
+		return nil, &protocols.AppError{
+			StatusCode: 400,
+			Err:        fmt.Errorf("current password is invalid"),
+		}
+	}
+
+	updateUserDTO.NewPassword = crypto.HashAndSalt([]byte(updateUserDTO.NewPassword))
+	user, err = u.userRepository.Update(updateUserDTO)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.User{
+		ID:       user.ID,
+		Email:    user.Email,
+		Name:     user.Name,
+		Password: user.Password,
+	}, nil
+
 }

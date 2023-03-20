@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -32,11 +31,17 @@ type ServerConfiguration struct {
 	Secret string `mapstructure:"SERVER_SECRET"`
 }
 
+var configLogger *log.Logger
+
 // SetupDB initialize configuration
 func Setup() {
+	configLogger := log.Default()
+	configLogger.SetPrefix("[CONFIG]: ")
+
 	var configuration *Configuration
 	path := os.Getenv("ENV_FILE")
-	fmt.Printf("loading env from file: %v\n", path)
+
+	configLogger.Printf("loading env from file: %v\n", path)
 	viper.SetConfigFile(path)
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()

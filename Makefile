@@ -1,7 +1,5 @@
-export ENV_FILE := $(pwd)/.env
-
 run:
-	go run cmd/app/main.go
+	ENV_FILE=.env go run cmd/app/main.go
 
 build:
 	go build -o bin/vanir cmd/app/main.go

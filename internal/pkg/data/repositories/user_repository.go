@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"time"
 	"vanir/internal/pkg/data/db"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
@@ -10,10 +11,28 @@ import (
 
 type UserEntity struct {
 	gorm.Model
-	ID       string `gorm:"primaryKey;type:VARCHAR(12);not null;unique"`
-	Email    string `gorm:"unique"`
-	Name     string `gorm:"type:VARCHAR(255)"`
-	Password string `gorm:"type:VARCHAR(128)"`
+	ID        string    `gorm:"primaryKey;type:VARCHAR(20);not null;unique"`
+	Email     string    `gorm:"unique"`
+	Name      string    `gorm:"type:VARCHAR(255)"`
+	Password  string    `gorm:"type:VARCHAR(128)"`
+	CreatedAt time.Time `gorm:"column:created_at;type:datetime;not null;" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime;not null;" json:"updated_at"`
+}
+
+func (UserEntity) TableName() string {
+	return "users"
+}
+
+func (u *UserEntity) BeforeCreate(tx *gorm.DB) error {
+	u.ID = helpers.ID("u")
+	u.CreatedAt = time.Now()
+	u.UpdatedAt = time.Now()
+	return nil
+}
+
+func (u *UserEntity) BeforeUpdate(tx *gorm.DB) error {
+	u.UpdatedAt = time.Now()
+	return nil
 }
 
 type UserRepository struct {
@@ -27,6 +46,7 @@ func GetUserRepository() *UserRepository {
 		userRepository = &UserRepository{
 			db: db.GetDB(),
 		}
+		userRepository.db.AutoMigrate(&UserEntity{})
 	}
 	return userRepository
 }
@@ -42,7 +62,6 @@ func (r *UserRepository) Get(ID string) (*UserEntity, error) {
 
 func (r *UserRepository) Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error) {
 	user := &UserEntity{
-		ID:       helpers.ID("u"),
 		Email:    createUserDTO.Email,
 		Name:     createUserDTO.Name,
 		Password: createUserDTO.Password,

@@ -29,6 +29,8 @@ func Run() {
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		DisablePrintStack: true,
 	}))
+	e.Use(middleware.CORS())
+	e.Use(middleware.Secure())
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
 		fmt.Println(c.Path(), c.QueryParams(), err)
 		e.DefaultHTTPErrorHandler(err, c)

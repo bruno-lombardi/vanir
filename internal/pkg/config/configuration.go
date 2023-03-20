@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -34,8 +35,9 @@ type ServerConfiguration struct {
 // SetupDB initialize configuration
 func Setup() {
 	var configuration *Configuration
-
-	viper.SetConfigFile(".env")
+	path := os.Getenv("ENV_FILE")
+	fmt.Printf("loading env from file: %v\n", path)
+	viper.SetConfigFile(path)
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
@@ -48,7 +50,6 @@ func Setup() {
 	}
 
 	Config = configuration
-	fmt.Printf("config: %v", configuration)
 }
 
 // GetConfig helps you to get configuration data

@@ -10,10 +10,10 @@ import (
 )
 
 func SetupUserRoutes(r *echo.Group) {
-	r.POST("/users", adapters.AdaptEchoJSON(
+	r.POST("/", adapters.AdaptControllerToEchoJSON(
 		controllers.NewCreateUserController(*services.GetUserService()), &models.CreateUserDTO{},
 	))
-	r.PUT("/users/:id", adapters.AdaptEchoJSON(
+	r.PUT("/:id", adapters.AdaptControllerToEchoJSON(
 		controllers.NewUpdateUserController(*services.GetUserService()), &models.UpdateUserDTO{},
 	))
 }

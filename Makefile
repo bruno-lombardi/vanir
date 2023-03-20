@@ -1,3 +1,5 @@
+export ENV_FILE := $(pwd)/.env
+
 run:
 	go run cmd/app/main.go
 
@@ -7,5 +9,5 @@ build:
 dependencies:
 	go mod download
 
-test:
-	go test -v ./...
+tests:
+	ENV_FILE=$(shell pwd)/.env.test go test -v ./...

@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func AdaptEchoJSON(controller protocols.Controller, body interface{}) func(c echo.Context) (err error) {
+func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}) func(c echo.Context) (err error) {
 	return func(c echo.Context) (err error) {
 		httpRequest := &protocols.HttpRequest{
 			Body: body,
@@ -50,4 +50,46 @@ func AdaptEchoJSON(controller protocols.Controller, body interface{}) func(c ech
 		}
 		return c.JSON(response.StatusCode, response.Body)
 	}
+}
+
+func AdaptMiddlewareToEcho(middleware protocols.Middleware, body interface{}) func(echo.HandlerFunc) echo.HandlerFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) (err error) {
+			httpRequest := &protocols.HttpRequest{
+				Body: body,
+			}
+			// Set Headers
+			httpRequest.Headers = c.Request().Header
+
+			// Set Params and Query Params
+			params := map[string]string{}
+			for _, p := range c.ParamNames() {
+				for _, v := range c.ParamValues() {
+					params[p] = v
+				}
+			}
+			httpRequest.PathParams = params
+			httpRequest.QueryParams = c.QueryParams()
+
+			if body != nil {
+				if err = c.Bind(httpRequest.Body); err != nil {
+					return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"message": err.Error()})
+				}
+			}
+
+			err = middleware.Handle(httpRequest)
+			if err != nil {
+				switch err := err.(type) {
+				case *protocols.AppError:
+					return echo.NewHTTPError(err.StatusCode, map[string]string{"message": err.Error()})
+				default:
+					return echo.NewHTTPError(500, map[string]string{"message": err.Error()})
+				}
+			}
+
+			next(c)
+			return nil
+		}
+	}
+
 }

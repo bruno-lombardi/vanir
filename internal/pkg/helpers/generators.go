@@ -16,6 +16,6 @@ func RandomString(n int) string {
 }
 
 func ID(prefix string) string {
-	id := fmt.Sprintf("%v_%v", prefix, RandomString(10))
+	id := fmt.Sprintf("%v_%v", prefix, RandomString(16))
 	return id
 }

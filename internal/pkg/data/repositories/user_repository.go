@@ -87,8 +87,7 @@ func (r *UserRepository) Update(updateUserDTO *models.UpdateUserDTO) (*UserEntit
 	if result.Error != nil {
 		return nil, result.Error
 	} else {
-		user := &UserEntity{}
-		r.db.First(&user, updateUserDTO.ID)
-		return user, nil
+		user, err := r.Get(updateUserDTO.ID)
+		return user, err
 	}
 }

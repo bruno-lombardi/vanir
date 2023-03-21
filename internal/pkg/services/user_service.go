@@ -10,6 +10,7 @@ import (
 
 type UserService interface {
 	Create(createUserDTO *models.CreateUserDTO) (*models.User, error)
+	Get(ID string) (*models.User, error)
 	Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error)
 }
 
@@ -73,4 +74,15 @@ func (u *UserServiceImpl) Update(updateUserDTO *models.UpdateUserDTO) (*models.U
 		Password: user.Password,
 	}, nil
 
+}
+
+func (u *UserServiceImpl) Get(ID string) (*models.User, error) {
+	user, err := u.userRepository.Get(ID)
+
+	return &models.User{
+		ID:       user.ID,
+		Email:    user.Email,
+		Name:     user.Name,
+		Password: user.Password,
+	}, err
 }

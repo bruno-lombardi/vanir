@@ -2,7 +2,7 @@ package router
 
 import (
 	"vanir/internal/app/presentation/adapters"
-	"vanir/internal/app/presentation/controllers"
+	"vanir/internal/app/presentation/controllers/users"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/services"
 

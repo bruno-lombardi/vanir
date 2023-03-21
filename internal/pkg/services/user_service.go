@@ -8,22 +8,27 @@ import (
 	"vanir/internal/pkg/protocols"
 )
 
-type UserService struct {
+type UserService interface {
+	Create(createUserDTO *models.CreateUserDTO) (*models.User, error)
+	Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error)
+}
+
+type UserServiceImpl struct {
 	userRepository *repositories.UserRepository
 }
 
-var userService *UserService
+var userService *UserServiceImpl
 
-func GetUserService() *UserService {
+func GetUserService() UserService {
 	if userService == nil {
-		userService = &UserService{
+		userService = &UserServiceImpl{
 			userRepository: repositories.GetUserRepository(),
 		}
 	}
 	return userService
 }
 
-func (u *UserService) Create(createUserDTO *models.CreateUserDTO) (*models.User, error) {
+func (u *UserServiceImpl) Create(createUserDTO *models.CreateUserDTO) (*models.User, error) {
 	createUserDTO.Password = crypto.HashAndSalt([]byte(createUserDTO.Password))
 	user, err := u.userRepository.Create(createUserDTO)
 
@@ -40,7 +45,7 @@ func (u *UserService) Create(createUserDTO *models.CreateUserDTO) (*models.User,
 
 }
 
-func (u *UserService) Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error) {
+func (u *UserServiceImpl) Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error) {
 	user, err := u.userRepository.Get(updateUserDTO.ID)
 	if err != nil {
 		return nil, err

@@ -35,15 +35,22 @@ func (u *UserEntity) BeforeUpdate(tx *gorm.DB) error {
 	return nil
 }
 
-type UserRepository struct {
+type UserRepository interface {
+	Get(ID string) (*UserEntity, error)
+	FindByEmail(email string) (*UserEntity, error)
+	Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error)
+	Update(updateUserDTO *models.UpdateUserDTO) (*UserEntity, error)
+}
+
+type UserRepositoryImpl struct {
 	db *gorm.DB
 }
 
-var userRepository *UserRepository
+var userRepository *UserRepositoryImpl
 
-func GetUserRepository() *UserRepository {
+func GetUserRepository() UserRepository {
 	if userRepository == nil {
-		userRepository = &UserRepository{
+		userRepository = &UserRepositoryImpl{
 			db: db.GetDB(),
 		}
 		userRepository.db.AutoMigrate(&UserEntity{})
@@ -51,7 +58,7 @@ func GetUserRepository() *UserRepository {
 	return userRepository
 }
 
-func (r *UserRepository) Get(ID string) (*UserEntity, error) {
+func (r *UserRepositoryImpl) Get(ID string) (*UserEntity, error) {
 	user := &UserEntity{}
 	result := r.db.Where("id = ?", ID).First(&user)
 	if result.Error != nil {
@@ -60,7 +67,16 @@ func (r *UserRepository) Get(ID string) (*UserEntity, error) {
 	return user, nil
 }
 
-func (r *UserRepository) Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error) {
+func (r *UserRepositoryImpl) FindByEmail(email string) (*UserEntity, error) {
+	user := &UserEntity{}
+	result := r.db.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
+}
+
+func (r *UserRepositoryImpl) Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error) {
 	user := &UserEntity{
 		Email:    createUserDTO.Email,
 		Name:     createUserDTO.Name,
@@ -75,7 +91,7 @@ func (r *UserRepository) Create(createUserDTO *models.CreateUserDTO) (*UserEntit
 	}
 }
 
-func (r *UserRepository) Update(updateUserDTO *models.UpdateUserDTO) (*UserEntity, error) {
+func (r *UserRepositoryImpl) Update(updateUserDTO *models.UpdateUserDTO) (*UserEntity, error) {
 
 	result := r.db.Model(&UserEntity{ID: updateUserDTO.ID}).Updates(&UserEntity{
 		ID:       updateUserDTO.ID,

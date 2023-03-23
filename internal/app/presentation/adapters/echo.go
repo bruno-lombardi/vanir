@@ -13,8 +13,8 @@ func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}
 		httpRequest := &protocols.HttpRequest{
 			Body: body,
 		}
-		// Set Headers
-		httpRequest.Headers = c.Request().Header
+		// Set http.Request
+		httpRequest.HttpReq = c.Request()
 
 		// Set Params and Query Params
 		params := map[string]string{}
@@ -58,8 +58,8 @@ func AdaptMiddlewareToEcho(middleware protocols.Middleware, body interface{}) fu
 			httpRequest := &protocols.HttpRequest{
 				Body: body,
 			}
-			// Set Headers
-			httpRequest.Headers = c.Request().Header
+			// Set http.Request
+			httpRequest.HttpReq = c.Request()
 
 			// Set Params and Query Params
 			params := map[string]string{}

@@ -1,5 +1,5 @@
 package protocols
 
 type Middleware interface {
-	Handle(*HttpRequest) error
+	Handle(req *HttpRequest) error
 }

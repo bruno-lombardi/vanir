@@ -13,5 +13,4 @@ func SetupAuthRoutes(r *echo.Group) {
 	r.POST("/", adapters.AdaptControllerToEchoJSON(
 		controllers.NewAuthController(services.GetAuthService()), &models.AuthCredentialsDTO{},
 	))
-
 }

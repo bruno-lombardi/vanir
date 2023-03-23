@@ -31,6 +31,13 @@ func GetUserService() UserService {
 	return userService
 }
 
+func NewUserServiceImpl(userRepository repositories.UserRepository, hasher crypto.Hasher) *UserServiceImpl {
+	return &UserServiceImpl{
+		userRepository: userRepository,
+		hasher:         hasher,
+	}
+}
+
 func (u *UserServiceImpl) Create(createUserDTO *models.CreateUserDTO) (*models.User, error) {
 	createUserDTO.Password = u.hasher.HashAndSalt([]byte(createUserDTO.Password))
 	user, err := u.userRepository.Create(createUserDTO)
@@ -39,10 +46,12 @@ func (u *UserServiceImpl) Create(createUserDTO *models.CreateUserDTO) (*models.U
 		return nil, err
 	} else {
 		return &models.User{
-			ID:       user.ID,
-			Email:    user.Email,
-			Name:     user.Name,
-			Password: user.Password,
+			ID:        user.ID,
+			Email:     user.Email,
+			Name:      user.Name,
+			Password:  user.Password,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
 		}, nil
 	}
 
@@ -70,10 +79,12 @@ func (u *UserServiceImpl) Update(updateUserDTO *models.UpdateUserDTO) (*models.U
 	}
 
 	return &models.User{
-		ID:       user.ID,
-		Email:    user.Email,
-		Name:     user.Name,
-		Password: user.Password,
+		ID:        user.ID,
+		Email:     user.Email,
+		Name:      user.Name,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}, nil
 
 }
@@ -82,9 +93,11 @@ func (u *UserServiceImpl) Get(ID string) (*models.User, error) {
 	user, err := u.userRepository.Get(ID)
 
 	return &models.User{
-		ID:       user.ID,
-		Email:    user.Email,
-		Name:     user.Name,
-		Password: user.Password,
+		ID:        user.ID,
+		Email:     user.Email,
+		Name:      user.Name,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}, err
 }

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"sync"
 	"time"
 	"vanir/internal/pkg/data/db"
 	"vanir/internal/pkg/data/models"
@@ -47,14 +48,15 @@ type UserRepositoryImpl struct {
 }
 
 var userRepository *UserRepositoryImpl
+var userRepositoryOnce sync.Once
 
 func GetUserRepository() UserRepository {
-	if userRepository == nil {
+	userRepositoryOnce.Do(func() {
 		userRepository = &UserRepositoryImpl{
 			db: db.GetDB(),
 		}
 		userRepository.db.AutoMigrate(&UserEntity{})
-	}
+	})
 	return userRepository
 }
 

@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"fmt"
+	"sync"
 	"time"
 	"vanir/internal/pkg/config"
 
@@ -16,11 +17,12 @@ type Encrypter interface {
 type JWTEncrypter struct{}
 
 var jwtEncrypter *JWTEncrypter
+var encrypterOnce sync.Once
 
 func GetEncrypter() Encrypter {
-	if jwtEncrypter == nil {
+	encrypterOnce.Do(func() {
 		jwtEncrypter = &JWTEncrypter{}
-	}
+	})
 	return jwtEncrypter
 }
 

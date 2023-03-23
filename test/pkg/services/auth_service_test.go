@@ -27,16 +27,13 @@ func (sut *AuthServiceSuite) BeforeTest(_, _ string) {
 	sut.hasher = &mocks.HasherMock{}
 	sut.encrypter = &mocks.EncrypterMock{}
 
-	sut.authService = &services.AuthServiceImpl{
-		UserRepository: sut.userRepository,
-		Hasher:         sut.hasher,
-		Encrypter:      sut.encrypter,
-	}
+	sut.authService = services.NewAuthServiceImpl(sut.userRepository, sut.hasher, sut.encrypter)
 }
 
 func (sut *AuthServiceSuite) AfterTest(_, _ string) {
 	sut.userRepository.On("FindByEmail", mock.Anything).Unset()
-	sut.hasher.On("CompareHashes", mock.Anything).Unset()
+	sut.hasher.On("CompareHashes", mock.Anything, mock.Anything).Unset()
+	sut.encrypter.On("CreateToken", mock.Anything).Unset()
 }
 
 func (sut *AuthServiceSuite) TestShouldReturnTokenWhenValidCredentials() {
@@ -47,13 +44,13 @@ func (sut *AuthServiceSuite) TestShouldReturnTokenWhenValidCredentials() {
 	)
 	sut.hasher.On("CompareHashes", mock.Anything, mock.Anything).Return(true)
 	sut.encrypter.On("CreateToken", mock.Anything).Return("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", nil)
-	token, err := sut.authService.Authenticate(&models.AuthCredentialsDTO{
+	authResponse, err := sut.authService.Authenticate(&models.AuthCredentialsDTO{
 		Email:    "bruno@email.com.br",
 		Password: "123456",
 	})
 
 	sut.Nil(err)
-	sut.Equal("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", token)
+	sut.Equal("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", authResponse.Token)
 
 	sut.userRepository.AssertCalled(sut.T(), "FindByEmail", "bruno@email.com.br")
 	sut.userRepository.AssertExpectations(sut.T())
@@ -69,12 +66,12 @@ func (sut *AuthServiceSuite) TestShouldReturnErrorWhenInvalidPassword() {
 		nil,
 	)
 	sut.hasher.On("CompareHashes", mock.Anything, mock.Anything).Return(false)
-	token, err := sut.authService.Authenticate(&models.AuthCredentialsDTO{
+	authResponse, err := sut.authService.Authenticate(&models.AuthCredentialsDTO{
 		Email:    "bruno@email.com.br",
 		Password: "123456",
 	})
 
-	sut.Empty(token)
+	sut.Nil(authResponse)
 	sut.NotNil(err)
 	sut.Equal(&protocols.AppError{
 		StatusCode: 401,
@@ -93,12 +90,12 @@ func (sut *AuthServiceSuite) TestShouldReturnErrorWhenInvalidEmail() {
 		nil,
 		fmt.Errorf("user not found"),
 	)
-	token, err := sut.authService.Authenticate(&models.AuthCredentialsDTO{
+	authResponse, err := sut.authService.Authenticate(&models.AuthCredentialsDTO{
 		Email:    "bruno@email.com.br",
 		Password: "123456",
 	})
 
-	sut.Empty(token)
+	sut.Nil(authResponse)
 	sut.NotNil(err)
 
 	sut.userRepository.AssertCalled(sut.T(), "FindByEmail", "bruno@email.com.br")

@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"log"
+	"sync"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,11 +15,12 @@ type Hasher interface {
 type BCryptHasher struct{}
 
 var bCryptHasher *BCryptHasher
+var hasherOnce sync.Once
 
 func GetHasher() Hasher {
-	if bCryptHasher == nil {
+	hasherOnce.Do(func() {
 		bCryptHasher = &BCryptHasher{}
-	}
+	})
 	return bCryptHasher
 }
 

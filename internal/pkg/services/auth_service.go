@@ -10,7 +10,7 @@ import (
 )
 
 type AuthService interface {
-	Authenticate(authCredentialsDTO *models.AuthCredentialsDTO) (token *models.AuthenticationResponseDTO, err error)
+	Authenticate(authCredentials *models.AuthCredentials) (token *models.AuthenticationResponse, err error)
 }
 
 type AuthServiceImpl struct {
@@ -41,13 +41,13 @@ func NewAuthServiceImpl(userRepository repositories.UserRepository, hasher crypt
 	}
 }
 
-func (s *AuthServiceImpl) Authenticate(authCredentialsDTO *models.AuthCredentialsDTO) (*models.AuthenticationResponseDTO, error) {
-	user, err := s.userRepository.FindByEmail(authCredentialsDTO.Email)
+func (s *AuthServiceImpl) Authenticate(authCredentials *models.AuthCredentials) (*models.AuthenticationResponse, error) {
+	user, err := s.userRepository.FindByEmail(authCredentials.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	isCompareSuccessful := s.hasher.CompareHashes(user.Password, []byte(authCredentialsDTO.Password))
+	isCompareSuccessful := s.hasher.CompareHashes(user.Password, []byte(authCredentials.Password))
 
 	if !isCompareSuccessful {
 		return nil, &protocols.AppError{
@@ -61,7 +61,7 @@ func (s *AuthServiceImpl) Authenticate(authCredentialsDTO *models.AuthCredential
 		return nil, err
 	}
 
-	return &models.AuthenticationResponseDTO{
+	return &models.AuthenticationResponse{
 		Token: token,
 	}, nil
 }

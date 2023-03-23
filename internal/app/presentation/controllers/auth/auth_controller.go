@@ -18,9 +18,9 @@ func NewAuthController(authService services.AuthService) *AuthController {
 }
 
 func (c *AuthController) Handle(req *protocols.HttpRequest) (res *protocols.HttpResponse, err error) {
-	authCredentialsDTO := req.Body.(*models.AuthCredentialsDTO)
+	authCredentials := req.Body.(*models.AuthCredentials)
 
-	authenticationResponse, err := (*c.authService).Authenticate(authCredentialsDTO)
+	authenticationResponse, err := (*c.authService).Authenticate(authCredentials)
 	if err != nil {
 		return &protocols.HttpResponse{
 			StatusCode: http.StatusInternalServerError,

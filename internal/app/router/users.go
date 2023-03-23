@@ -18,10 +18,10 @@ func SetupUserRoutes(r *echo.Group) {
 	authenticatedMiddleware := middlewares.GetAuthenticatedMiddleware()
 
 	r.POST("", adapters.AdaptControllerToEchoJSON(
-		createUserController, &models.CreateUserDTO{},
+		createUserController, &models.CreateUserParams{},
 	))
 	r.PUT("/:id",
-		adapters.AdaptControllerToEchoJSON(updateUserController, &models.UpdateUserDTO{}),
+		adapters.AdaptControllerToEchoJSON(updateUserController, &models.UpdateUserParams{}),
 		adapters.AdaptMiddlewareToEcho(authenticatedMiddleware, nil),
 	)
 	r.GET("/:id",

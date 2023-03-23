@@ -9,9 +9,9 @@ import (
 )
 
 type UserService interface {
-	Create(createUserDTO *models.CreateUserDTO) (*models.User, error)
+	Create(createUserParams *models.CreateUserParams) (*models.User, error)
 	Get(ID string) (*models.User, error)
-	Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error)
+	Update(updateUserParams *models.UpdateUserParams) (*models.User, error)
 }
 
 type UserServiceImpl struct {
@@ -38,9 +38,9 @@ func NewUserServiceImpl(userRepository repositories.UserRepository, hasher crypt
 	}
 }
 
-func (u *UserServiceImpl) Create(createUserDTO *models.CreateUserDTO) (*models.User, error) {
-	createUserDTO.Password = u.hasher.HashAndSalt([]byte(createUserDTO.Password))
-	user, err := u.userRepository.Create(createUserDTO)
+func (u *UserServiceImpl) Create(createUserParams *models.CreateUserParams) (*models.User, error) {
+	createUserParams.Password = u.hasher.HashAndSalt([]byte(createUserParams.Password))
+	user, err := u.userRepository.Create(createUserParams)
 
 	if err != nil {
 		return nil, err
@@ -57,13 +57,13 @@ func (u *UserServiceImpl) Create(createUserDTO *models.CreateUserDTO) (*models.U
 
 }
 
-func (u *UserServiceImpl) Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error) {
-	user, err := u.userRepository.Get(updateUserDTO.ID)
+func (u *UserServiceImpl) Update(updateUserParams *models.UpdateUserParams) (*models.User, error) {
+	user, err := u.userRepository.Get(updateUserParams.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	isCompareSuccessful := u.hasher.CompareHashes(user.Password, []byte(updateUserDTO.CurrentPassword))
+	isCompareSuccessful := u.hasher.CompareHashes(user.Password, []byte(updateUserParams.CurrentPassword))
 
 	if !isCompareSuccessful {
 		return nil, &protocols.AppError{
@@ -72,8 +72,8 @@ func (u *UserServiceImpl) Update(updateUserDTO *models.UpdateUserDTO) (*models.U
 		}
 	}
 
-	updateUserDTO.NewPassword = u.hasher.HashAndSalt([]byte(updateUserDTO.NewPassword))
-	user, err = u.userRepository.Update(updateUserDTO)
+	updateUserParams.NewPassword = u.hasher.HashAndSalt([]byte(updateUserParams.NewPassword))
+	user, err = u.userRepository.Update(updateUserParams)
 	if err != nil {
 		return nil, err
 	}

@@ -18,10 +18,10 @@ func NewCreateUserController(userService services.UserService) *CreateUserContro
 }
 
 func (c *CreateUserController) Handle(req *protocols.HttpRequest) (*protocols.HttpResponse, error) {
-	createUserDTO := req.Body.(*models.CreateUserDTO)
+	createUserParams := req.Body.(*models.CreateUserParams)
 
 	var err error
-	user, err := (*c.userService).Create(createUserDTO)
+	user, err := (*c.userService).Create(createUserParams)
 	if err != nil {
 		return &protocols.HttpResponse{
 			StatusCode: http.StatusInternalServerError,

@@ -18,10 +18,10 @@ func NewUpdateUserController(userService services.UserService) *UpdateUserContro
 }
 
 func (c *UpdateUserController) Handle(req *protocols.HttpRequest) (*protocols.HttpResponse, error) {
-	updateUserDTO := req.Body.(*models.UpdateUserDTO)
+	updateUserParams := req.Body.(*models.UpdateUserParams)
 
 	var err error
-	user, err := (*c.userService).Update(updateUserDTO)
+	user, err := (*c.userService).Update(updateUserParams)
 	if err != nil {
 		return &protocols.HttpResponse{
 			StatusCode: http.StatusInternalServerError,

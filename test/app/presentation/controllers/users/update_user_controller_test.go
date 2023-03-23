@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"vanir/internal/app/presentation/controllers/users"
+	controllers "vanir/internal/app/presentation/controllers/users"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
 	"vanir/internal/pkg/protocols"
@@ -18,7 +18,7 @@ func RunUpdateUserControllerTestCases(t *testing.T) {
 		{
 			Name: "Should update user with valid data",
 			WhenRequest: &protocols.HttpRequest{
-				Body: &models.UpdateUserDTO{
+				Body: &models.UpdateUserParams{
 					Name:                    "Bruno Lombardi",
 					Email:                   "bruno@email.com",
 					CurrentPassword:         "123456",
@@ -40,7 +40,7 @@ func RunUpdateUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			AfterTest: func() error {
-				userServiceMock.AssertCalled(t, "Update", &models.UpdateUserDTO{
+				userServiceMock.AssertCalled(t, "Update", &models.UpdateUserParams{
 					Name:                    "Bruno Lombardi",
 					Email:                   "bruno@email.com",
 					CurrentPassword:         "123456",
@@ -55,7 +55,7 @@ func RunUpdateUserControllerTestCases(t *testing.T) {
 		{
 			Name: "Should not update user when user service returns error",
 			WhenRequest: &protocols.HttpRequest{
-				Body: &models.UpdateUserDTO{},
+				Body: &models.UpdateUserParams{},
 			},
 			BeforeTest: func() error {
 				userServiceMock.On("Update", mock.Anything).Return(nil, fmt.Errorf("user service threw an error"))
@@ -66,7 +66,7 @@ func RunUpdateUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			AfterTest: func() error {
-				userServiceMock.AssertCalled(t, "Update", &models.UpdateUserDTO{})
+				userServiceMock.AssertCalled(t, "Update", &models.UpdateUserParams{})
 				userServiceMock.AssertExpectations(t)
 				userServiceMock.On("Update", mock.Anything).Unset()
 				return nil

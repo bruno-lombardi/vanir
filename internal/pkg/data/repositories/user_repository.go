@@ -39,8 +39,8 @@ func (u *UserEntity) BeforeUpdate(tx *gorm.DB) error {
 type UserRepository interface {
 	Get(ID string) (*UserEntity, error)
 	FindByEmail(email string) (*UserEntity, error)
-	Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error)
-	Update(updateUserDTO *models.UpdateUserDTO) (*UserEntity, error)
+	Create(createUserParams *models.CreateUserParams) (*UserEntity, error)
+	Update(updateUserParams *models.UpdateUserParams) (*UserEntity, error)
 }
 
 type UserRepositoryImpl struct {
@@ -78,11 +78,11 @@ func (r *UserRepositoryImpl) FindByEmail(email string) (*UserEntity, error) {
 	return user, nil
 }
 
-func (r *UserRepositoryImpl) Create(createUserDTO *models.CreateUserDTO) (*UserEntity, error) {
+func (r *UserRepositoryImpl) Create(createUserParams *models.CreateUserParams) (*UserEntity, error) {
 	user := &UserEntity{
-		Email:    createUserDTO.Email,
-		Name:     createUserDTO.Name,
-		Password: createUserDTO.Password,
+		Email:    createUserParams.Email,
+		Name:     createUserParams.Name,
+		Password: createUserParams.Password,
 	}
 	result := r.db.Create(&user)
 
@@ -93,19 +93,19 @@ func (r *UserRepositoryImpl) Create(createUserDTO *models.CreateUserDTO) (*UserE
 	}
 }
 
-func (r *UserRepositoryImpl) Update(updateUserDTO *models.UpdateUserDTO) (*UserEntity, error) {
+func (r *UserRepositoryImpl) Update(updateUserParams *models.UpdateUserParams) (*UserEntity, error) {
 
-	result := r.db.Model(&UserEntity{ID: updateUserDTO.ID}).Updates(&UserEntity{
-		ID:       updateUserDTO.ID,
-		Name:     updateUserDTO.Name,
-		Email:    updateUserDTO.Email,
-		Password: updateUserDTO.NewPassword,
+	result := r.db.Model(&UserEntity{ID: updateUserParams.ID}).Updates(&UserEntity{
+		ID:       updateUserParams.ID,
+		Name:     updateUserParams.Name,
+		Email:    updateUserParams.Email,
+		Password: updateUserParams.NewPassword,
 	})
 
 	if result.Error != nil {
 		return nil, result.Error
 	} else {
-		user, err := r.Get(updateUserDTO.ID)
+		user, err := r.Get(updateUserParams.ID)
 		return user, err
 	}
 }

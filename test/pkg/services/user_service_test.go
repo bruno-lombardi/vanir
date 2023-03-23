@@ -42,7 +42,7 @@ func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {
 		nil,
 	)
 
-	user, err := sut.userService.Create(&models.CreateUserDTO{
+	user, err := sut.userService.Create(&models.CreateUserParams{
 		Name:                 "Bruno",
 		Email:                "bruno@email.com.br",
 		Password:             "123456",
@@ -53,7 +53,7 @@ func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {
 	sut.Equal(user.ID, id)
 	sut.Equal("$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O", user.Password)
 
-	sut.userRepository.AssertCalled(sut.T(), "Create", &models.CreateUserDTO{
+	sut.userRepository.AssertCalled(sut.T(), "Create", &models.CreateUserParams{
 		Name:                 "Bruno",
 		Email:                "bruno@email.com.br",
 		Password:             "$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O",
@@ -71,7 +71,7 @@ func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFails() {
 		fmt.Errorf("user repository threw error"),
 	)
 
-	user, err := sut.userService.Create(&models.CreateUserDTO{
+	user, err := sut.userService.Create(&models.CreateUserParams{
 		Name:                 "Bruno",
 		Email:                "bruno@email.com.br",
 		Password:             "123456",
@@ -81,7 +81,7 @@ func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFails() {
 	sut.NotNil(err)
 	sut.Nil(user)
 
-	sut.userRepository.AssertCalled(sut.T(), "Create", &models.CreateUserDTO{
+	sut.userRepository.AssertCalled(sut.T(), "Create", &models.CreateUserParams{
 		Name:                 "Bruno",
 		Email:                "bruno@email.com.br",
 		Password:             "$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O",

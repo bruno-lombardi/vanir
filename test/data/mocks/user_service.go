@@ -10,8 +10,8 @@ type UserServiceMock struct {
 	mock.Mock
 }
 
-func (s *UserServiceMock) Create(createUserDTO *models.CreateUserDTO) (*models.User, error) {
-	args := s.Called(createUserDTO)
+func (s *UserServiceMock) Create(createUserParams *models.CreateUserParams) (*models.User, error) {
+	args := s.Called(createUserParams)
 	user, ok := args.Get(0).(*models.User)
 
 	if ok {
@@ -27,8 +27,8 @@ func (s *UserServiceMock) Create(createUserDTO *models.CreateUserDTO) (*models.U
 	return nil, nil
 }
 
-func (s *UserServiceMock) Update(updateUserDTO *models.UpdateUserDTO) (*models.User, error) {
-	args := s.Called(updateUserDTO)
+func (s *UserServiceMock) Update(updateUserParams *models.UpdateUserParams) (*models.User, error) {
+	args := s.Called(updateUserParams)
 	user, ok := args.Get(0).(*models.User)
 
 	if ok {

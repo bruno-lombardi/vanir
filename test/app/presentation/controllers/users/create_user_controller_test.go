@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"vanir/internal/app/presentation/controllers/users"
+	controllers "vanir/internal/app/presentation/controllers/users"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
 	"vanir/internal/pkg/protocols"
@@ -19,7 +19,7 @@ func RunCreateUserControllerTestCases(t *testing.T) {
 		{
 			Name: "Should create user with valid data",
 			WhenRequest: &protocols.HttpRequest{
-				Body: &models.CreateUserDTO{
+				Body: &models.CreateUserParams{
 					Name:                 "Bruno Lombardi",
 					Email:                "bruno@email.com",
 					Password:             "123456",
@@ -40,7 +40,7 @@ func RunCreateUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			AfterTest: func() error {
-				userServiceMock.AssertCalled(t, "Create", &models.CreateUserDTO{
+				userServiceMock.AssertCalled(t, "Create", &models.CreateUserParams{
 					Name:                 "Bruno Lombardi",
 					Email:                "bruno@email.com",
 					Password:             "123456",
@@ -54,7 +54,7 @@ func RunCreateUserControllerTestCases(t *testing.T) {
 		{
 			Name: "Should not create user when user service returns error",
 			WhenRequest: &protocols.HttpRequest{
-				Body: &models.CreateUserDTO{
+				Body: &models.CreateUserParams{
 					Name:                 "Bruno Lombardi",
 					Email:                "bruno@email.com",
 					Password:             "123456",
@@ -70,7 +70,7 @@ func RunCreateUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			AfterTest: func() error {
-				userServiceMock.AssertCalled(t, "Create", &models.CreateUserDTO{
+				userServiceMock.AssertCalled(t, "Create", &models.CreateUserParams{
 					Name:                 "Bruno Lombardi",
 					Email:                "bruno@email.com",
 					Password:             "123456",

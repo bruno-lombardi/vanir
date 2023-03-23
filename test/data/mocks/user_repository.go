@@ -31,12 +31,12 @@ func (r *UserRepositoryMock) FindByEmail(email string) (*repositories.UserEntity
 	return eitherUserEntityOrError(args)
 }
 
-func (r *UserRepositoryMock) Create(createUserDTO *models.CreateUserDTO) (*repositories.UserEntity, error) {
-	args := r.Called(createUserDTO)
+func (r *UserRepositoryMock) Create(createUserParams *models.CreateUserParams) (*repositories.UserEntity, error) {
+	args := r.Called(createUserParams)
 	return eitherUserEntityOrError(args)
 }
 
-func (r *UserRepositoryMock) Update(updateUserDTO *models.UpdateUserDTO) (*repositories.UserEntity, error) {
-	args := r.Called(updateUserDTO)
+func (r *UserRepositoryMock) Update(updateUserParams *models.UpdateUserParams) (*repositories.UserEntity, error) {
+	args := r.Called(updateUserParams)
 	return eitherUserEntityOrError(args)
 }

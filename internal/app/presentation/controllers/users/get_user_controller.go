@@ -10,8 +10,8 @@ type GetUserController struct {
 	userService *services.UserService
 }
 
-func NewGetUserController(userService services.UserService) *CreateUserController {
-	return &CreateUserController{
+func NewGetUserController(userService services.UserService) *GetUserController {
+	return &GetUserController{
 		userService: &userService,
 	}
 }

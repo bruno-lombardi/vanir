@@ -32,7 +32,12 @@ func NewAuthenticatedMiddleware(encrypter crypto.Encrypter, userService services
 }
 
 func (m *AuthenticatedMiddleware) Handle(req *protocols.HttpRequest) error {
-	splitted := strings.Split(req.HttpReq.Header.Get("authorization"), " ")
+	authorization := req.HttpReq.Header.Get("authorization")
+	if authorization == "" {
+		return unauthorized("Invalid credentials provided")
+	}
+
+	splitted := strings.Split(authorization, " ")
 	token := splitted[1]
 
 	valid, subject := (*m.encrypter).ValidateToken(token)

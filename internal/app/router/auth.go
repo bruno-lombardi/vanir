@@ -10,7 +10,7 @@ import (
 )
 
 func SetupAuthRoutes(r *echo.Group) {
-	r.POST("/", adapters.AdaptControllerToEchoJSON(
+	r.POST("", adapters.AdaptControllerToEchoJSON(
 		controllers.NewAuthController(services.GetAuthService()), &models.AuthCredentialsDTO{},
 	))
 }

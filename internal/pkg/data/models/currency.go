@@ -11,6 +11,12 @@ type CryptoCurrency struct {
 	Prices map[string]PriceDetails `json:"prices"`
 }
 
+type ListTopCryptoCurrenciesQueryParams struct {
+	Page       string `query:"page" validate:"required"`
+	Limit      string `query:"limit" validate:"required"`
+	ToCurrency string `query:"to_currency" validate:"required"`
+}
+
 type CryptoCurrencyPriceHistory struct {
 	Name     string             `json:"name"`
 	Code     string             `json:"code"`
@@ -29,14 +35,14 @@ type OHLCV struct {
 }
 
 type PriceDetails struct {
-	CurrencyCode string     `json:"currency_code"`
-	Price        float64    `json:"price"`
-	Open24Hour   float64    `json:"open_24_hour"`
-	High24Hour   float64    `json:"high_24_hour"`
-	Low24Hour    float64    `json:"low_24_hour"`
-	OpenDay      float64    `json:"open_day"`
-	HighDay      float64    `json:"high_day"`
-	LowDay       float64    `json:"low_day"`
-	MarketCap    float64    `json:"market_cap"`
-	LastUpdate   *time.Time `json:"last_update"`
+	CurrencyCode string    `json:"currency_code"`
+	Price        float64   `json:"price"`
+	Open24Hour   float64   `json:"open_24_hour"`
+	High24Hour   float64   `json:"high_24_hour"`
+	Low24Hour    float64   `json:"low_24_hour"`
+	OpenDay      float64   `json:"open_day"`
+	HighDay      float64   `json:"high_day"`
+	LowDay       float64   `json:"low_day"`
+	MarketCap    float64   `json:"market_cap"`
+	LastUpdate   time.Time `json:"last_update"`
 }

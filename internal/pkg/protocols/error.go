@@ -20,3 +20,15 @@ func NewAppError(message string, statusCode int) *AppError {
 		StatusCode: statusCode,
 	}
 }
+
+type CryptoCompareError struct {
+	Message        string `json:"Message"`
+	ParamWithError string `json:"ParamWithError"`
+	Response       string `json:"Response"`
+	Type           uint32 `json:"Type"`
+}
+
+func (e *CryptoCompareError) Error() string {
+	message := fmt.Sprintf("[CryptoCompareError]: %s", e.Message)
+	return message
+}

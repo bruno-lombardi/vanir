@@ -10,8 +10,14 @@ import (
 var Config *Configuration
 
 type Configuration struct {
-	Server   ServerConfiguration   `mapstructure:",squash"`
-	Database DatabaseConfiguration `mapstructure:",squash"`
+	Server      ServerConfiguration     `mapstructure:",squash"`
+	Database    DatabaseConfiguration   `mapstructure:",squash"`
+	HttpClients HttpClientConfiguration `mapstructure:",squash"`
+}
+
+type HttpClientConfiguration struct {
+	CryptoCompareBaseURL string `mapstructure:"CRYPTO_COMPARE_BASE_URL"`
+	CryptoCompareAPIKey  string `mapstructure:"CRYPTO_COMPARE_API_KEY"`
 }
 
 type DatabaseConfiguration struct {

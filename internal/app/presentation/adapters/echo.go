@@ -13,10 +13,8 @@ func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}
 		httpRequest := &protocols.HttpRequest{
 			Body: body,
 		}
-		// Set http.Request
 		httpRequest.HttpReq = c.Request()
 
-		// Set Params and Query Params
 		params := map[string]string{}
 		for _, p := range c.ParamNames() {
 			for _, v := range c.ParamValues() {
@@ -58,10 +56,8 @@ func AdaptMiddlewareToEcho(middleware protocols.Middleware, body interface{}) fu
 			httpRequest := &protocols.HttpRequest{
 				Body: body,
 			}
-			// Set http.Request
 			httpRequest.HttpReq = c.Request()
 
-			// Set Params and Query Params
 			params := map[string]string{}
 			for _, p := range c.ParamNames() {
 				for _, v := range c.ParamValues() {

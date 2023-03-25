@@ -51,6 +51,12 @@ func (s *CryptoServiceImpl) ListTopCryptoCurrencies(params *models.ListTopCrypto
 		return topCryptos, nil
 	}
 
+	topCryptos = mapTopListResponse(response, params, topCryptos)
+
+	return topCryptos, nil
+}
+
+func mapTopListResponse(response *clients.TopListResponse, params *models.ListTopCryptoCurrenciesQueryParams, topCryptos []models.CryptoCurrency) []models.CryptoCurrency {
 	for _, item := range response.Data {
 		crypto := models.CryptoCurrency{
 			Name:     item.CoinInfo.Name,
@@ -63,21 +69,21 @@ func (s *CryptoServiceImpl) ListTopCryptoCurrencies(params *models.ListTopCrypto
 		crypto.Prices[params.ToCurrency] = mapRawPriceDetails(rawPriceDetails, params.ToCurrency)
 		topCryptos = append(topCryptos, crypto)
 	}
-
-	return topCryptos, nil
+	return topCryptos
 }
 
 func mapRawPriceDetails(rawPriceDetails clients.PriceDetailsRaw, currencyCode string) models.PriceDetails {
 	return models.PriceDetails{
-		CurrencyCode: currencyCode,
-		Price:        rawPriceDetails.Price,
-		Open24Hour:   rawPriceDetails.Open24Hour,
-		High24Hour:   rawPriceDetails.High24Hour,
-		Low24Hour:    rawPriceDetails.Low24Hour,
-		OpenDay:      rawPriceDetails.Openday,
-		HighDay:      rawPriceDetails.Highday,
-		LowDay:       rawPriceDetails.Lowday,
-		MarketCap:    rawPriceDetails.Mktcap,
-		LastUpdate:   time.Unix(int64(rawPriceDetails.Lastupdate), 0),
+		CurrencyCode:           currencyCode,
+		Price:                  rawPriceDetails.Price,
+		Open24Hour:             rawPriceDetails.Open24Hour,
+		High24Hour:             rawPriceDetails.High24Hour,
+		Low24Hour:              rawPriceDetails.Low24Hour,
+		OpenDay:                rawPriceDetails.Openday,
+		HighDay:                rawPriceDetails.Highday,
+		LowDay:                 rawPriceDetails.Lowday,
+		MarketCap:              rawPriceDetails.Mktcap,
+		ChangePercentage24Hour: rawPriceDetails.Changepct24Hour,
+		LastUpdate:             time.Unix(int64(rawPriceDetails.Lastupdate), 0),
 	}
 }

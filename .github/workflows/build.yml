@@ -35,13 +35,7 @@ jobs:
             docker build . -t brunolombardi/vanir:$VERSION -t brunolombardi/vanir:latest
             docker push brunolombardi/vanir:$VERSION
   deploy:
+    needs: [build]
     name: "deploy"
-    runs-on: ubuntu-20.04
-    steps:
-      - name: get repository files
-        uses: actions/checkout@v3
-      - name: call deploy workflow
-        uses: ./.github/workflows/deploy.yml
-        with:
-          ref: ${{ github.event.pull_request.number }}
+    uses: ./.github/actions/deploy
     secrets: inherit

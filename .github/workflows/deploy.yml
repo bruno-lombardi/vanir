@@ -1,24 +1,20 @@
 name: deploy
 
 description: Deploy the latest image in digital ocean droplet
+
 on:
   workflow_call:
-    inputs:
-      ref:
-        description: 'branch name'
-        required: true
-        type: string
 
-env:
-  REF: ${{ inputs.ref }}
-
-runs:
-  using: "composite"
-  steps:
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    - name: Execute docker ps on ocean droplet
-      run: |
-        doctl compute ssh ocean --ssh-command="docker ps"
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: get repository files
+        uses: actions/checkout@v3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Execute docker ps on ocean droplet
+        run: |
+          doctl compute ssh ocean --ssh-command="docker ps"

@@ -36,3 +36,4 @@ jobs:
             docker push brunolombardi/vanir:$VERSION
       - name: run deploy on droplet
         uses: ./.github/actions/deploy
+        secrets: inherit

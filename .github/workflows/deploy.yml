@@ -19,6 +19,7 @@ jobs:
         run: |
           touch .id_rsa
           echo "$SSH_KEY" >> .id_rsa
+          cat .id_rsa
       - name: Execute docker ps on digital ocean droplet
         run: |
           doctl compute ssh ocean --ssh-key-path="./.id_rsa" --ssh-command="docker ps"

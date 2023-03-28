@@ -37,5 +37,9 @@ jobs:
   deploy:
     name: "deploy"
     runs-on: ubuntu-20.04
-    uses: ./.github/actions/deploy
+    steps:
+      - name: get repository files
+        uses: actions/checkout@v3
+      - name: call deploy workflow
+        uses: ./.github/actions/deploy
     secrets: inherit

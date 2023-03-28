@@ -1,6 +1,16 @@
 name: deploy
 
 description: Deploy the latest image in digital ocean droplet
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: 'branch name'
+        required: true
+        type: string
+
+env:
+  REF: ${{ inputs.ref }}
 
 runs:
   using: "composite"

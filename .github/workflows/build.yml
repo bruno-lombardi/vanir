@@ -32,7 +32,7 @@ jobs:
           timeout_minutes: 3
           max_attempts: 3
           command: |
-            docker build . -t vanir:$VERSION -t vanir:latest
+            docker build . -t brunolombardi/vanir:$VERSION -t brunolombardi/vanir:latest
             docker push brunolombardi/vanir:$VERSION
       - name: run deploy on droplet
         uses: ./.github/actions/deploy

@@ -41,7 +41,7 @@ jobs:
       - name: get repository files
         uses: actions/checkout@v3
       - name: call deploy workflow
-        uses: ./.github/actions/deploy
+        uses: ./.github/workflows/deploy.yml
         with:
           ref: ${{ github.event.pull_request.number }}
     secrets: inherit

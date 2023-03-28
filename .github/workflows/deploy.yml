@@ -19,7 +19,9 @@ jobs:
         run: |
           touch .id_rsa
           echo "$SSH_KEY" >> .id_rsa
-          touch ~/.ssh/known_hosts
+          cd ~/.ssh
+          touch known_hosts
+          cd ..
           ssh-keyscan -H 159.203.116.135 >> ~/.ssh/known_hosts
       - name: Execute docker ps on digital ocean droplet
         run: |

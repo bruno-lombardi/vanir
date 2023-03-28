@@ -1,7 +1,5 @@
 name: deploy
 
-description: Deploy the latest image in digital ocean droplet
-
 on:
   workflow_call:
 

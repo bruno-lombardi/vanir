@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 	"vanir/internal/pkg/data/db"
+	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
 
 	"gorm.io/gorm"
@@ -22,8 +23,6 @@ type FavoriteEntity struct {
 	Reference string       `gorm:"type:VARCHAR(255);not null"`
 	UserID    string       `gorm:"type:VARCHAR(20)"`
 	User      UserEntity
-	CreatedAt time.Time `gorm:"column:created_at;type:datetime;not null;" json:"created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime;not null;" json:"updated_at"`
 }
 
 func (FavoriteEntity) TableName() string {
@@ -44,8 +43,8 @@ func (f *FavoriteEntity) BeforeUpdate(tx *gorm.DB) error {
 
 type FavoritesRepository interface {
 	Get(ID string) (*FavoriteEntity, error)
-	FindByEmail(email string) (*FavoriteEntity, error)
-	Create(params string) (*FavoriteEntity, error)
+	FindAllByUserID(userID string, page int, limit int) ([]FavoriteEntity, int64, error)
+	Create(params *models.CreateFavoriteParams) (*FavoriteEntity, error)
 	Delete(ID string) error
 }
 
@@ -62,7 +61,53 @@ func GetFavoritesRepository() FavoritesRepository {
 		favoritesRepository = &FavoritesRepositoryImpl{
 			db: db.GetDB(),
 		}
-		favoritesRepository.db.AutoMigrate(&UserEntity{})
+		favoritesRepository.db.AutoMigrate(&FavoriteEntity{})
 	})
 	return favoritesRepository
+}
+
+func (r *FavoritesRepositoryImpl) Get(ID string) (*FavoriteEntity, error) {
+	favorite := &FavoriteEntity{}
+	result := r.db.Where("id = ?", ID).First(&favorite)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return favorite, nil
+}
+
+func (r *FavoritesRepositoryImpl) FindAllByUserID(userID string, page int, limit int) ([]FavoriteEntity, int64, error) {
+	favorites := []FavoriteEntity{}
+	var count int64
+	result := r.db.Where("user_id = ?", userID).Limit(limit).Offset(page * limit).Find(&favorites)
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	result = r.db.Model(&FavoriteEntity{}).Where("user_id = ?", userID).Count(&count)
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+
+	return favorites, count, nil
+}
+
+func (r *FavoritesRepositoryImpl) Create(params *models.CreateFavoriteParams) (*FavoriteEntity, error) {
+	favorite := &FavoriteEntity{
+		Type:      FavoriteType(params.Type),
+		Reference: params.Reference,
+		UserID:    params.UserID,
+	}
+	result := r.db.Create(&favorite)
+
+	if result.Error != nil {
+		return nil, result.Error
+	} else {
+		return favorite, nil
+	}
+}
+
+func (r *FavoritesRepositoryImpl) Delete(ID string) error {
+	favorite := &FavoriteEntity{ID: ID}
+	result := r.db.Delete(&favorite)
+
+	return result.Error
 }

@@ -14,8 +14,14 @@ func SetupCryptoRoutes(r *echo.Group) {
 	cryptoService := services.GetCryptoService()
 	authenticatedMiddleware := middlewares.GetAuthenticatedMiddleware()
 	listTopCryptosController := controllers.NewListTopCryptosController(cryptoService)
+	favoriteCryptosController := controllers.NewListUserFavoriteCryptosController(cryptoService)
+
 	r.GET("/toplist",
 		adapters.AdaptControllerToEchoJSON(listTopCryptosController, &models.ListTopCryptoCurrenciesQueryParams{}),
+		adapters.AdaptMiddlewareToEcho(authenticatedMiddleware, nil),
+	)
+	r.GET("/favorites",
+		adapters.AdaptControllerToEchoJSON(favoriteCryptosController, &models.ListUserFavoriteCryptoCurrenciesQueryParams{}),
 		adapters.AdaptMiddlewareToEcho(authenticatedMiddleware, nil),
 	)
 }

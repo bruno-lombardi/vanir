@@ -14,7 +14,16 @@ type CryptoCompareHttpClient struct {
 }
 
 type TopListResponse struct {
-	Data []TopListCurrencyItem
+	Data     []TopListCurrencyItem   `json:"Data"`
+	MetaData TopListResponseMetadata `json:"MetaData"`
+}
+
+type MultipleSymbolsResponse struct {
+	Raw map[string]map[string]PriceDetailsRaw `json:"Raw"`
+}
+
+type TopListResponseMetadata struct {
+	Count int `json:"Count"`
 }
 
 type PriceDetailsRaw struct {

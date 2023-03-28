@@ -6,4 +6,5 @@ func SetupRootRouter(r *echo.Group) {
 	SetupUserRoutes(r.Group("/users"))
 	SetupAuthRoutes(r.Group("/auth"))
 	SetupCryptoRoutes(r.Group("/cryptos"))
+	SetupFavoritesRoutes(r.Group("/favorites"))
 }

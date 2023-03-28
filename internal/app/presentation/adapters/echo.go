@@ -3,9 +3,14 @@ package adapters
 import (
 	"net/http"
 	"strings"
+	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/protocols"
 
 	"github.com/labstack/echo/v4"
+)
+
+const (
+	AUTHENTICATED_USER_KEY = "authenticated_user"
 )
 
 func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}) func(c echo.Context) (err error) {
@@ -13,6 +18,11 @@ func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}
 		httpRequest := &protocols.HttpRequest{
 			Body: body,
 		}
+		user, ok := c.Get(AUTHENTICATED_USER_KEY).(*models.User)
+		if ok && user != nil {
+			httpRequest.AuthenticatedUser = user
+		}
+
 		httpRequest.HttpReq = c.Request()
 
 		params := map[string]string{}
@@ -26,10 +36,10 @@ func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}
 
 		if body != nil {
 			if err = c.Bind(httpRequest.Body); err != nil {
-				return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"message": err.Error()})
+				return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 			}
 			if err = c.Validate(httpRequest.Body); err != nil {
-				return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"message": err.Error()})
+				return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 			}
 		}
 
@@ -37,9 +47,9 @@ func AdaptControllerToEchoJSON(controller protocols.Controller, body interface{}
 		if err != nil {
 			switch err := err.(type) {
 			case *protocols.AppError:
-				return echo.NewHTTPError(err.StatusCode, map[string]string{"message": err.Error()})
+				return c.JSON(err.StatusCode, map[string]string{"message": err.Error()})
 			default:
-				return echo.NewHTTPError(response.StatusCode, map[string]string{"message": err.Error()})
+				return c.JSON(response.StatusCode, map[string]string{"message": err.Error()})
 			}
 		}
 
@@ -69,7 +79,7 @@ func AdaptMiddlewareToEcho(middleware protocols.Middleware, body interface{}) fu
 
 			if body != nil {
 				if err = c.Bind(httpRequest.Body); err != nil {
-					return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"message": err.Error()})
+					return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 				}
 			}
 
@@ -77,10 +87,13 @@ func AdaptMiddlewareToEcho(middleware protocols.Middleware, body interface{}) fu
 			if err != nil {
 				switch err := err.(type) {
 				case *protocols.AppError:
-					return echo.NewHTTPError(err.StatusCode, map[string]string{"message": err.Error()})
+					return c.JSON(err.StatusCode, map[string]string{"message": err.Error()})
 				default:
-					return echo.NewHTTPError(500, map[string]string{"message": err.Error()})
+					return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 				}
+			}
+			if httpRequest.AuthenticatedUser != nil {
+				c.Set(AUTHENTICATED_USER_KEY, httpRequest.AuthenticatedUser)
 			}
 
 			next(c)

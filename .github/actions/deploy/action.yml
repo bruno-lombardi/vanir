@@ -1,0 +1,14 @@
+name: deploy
+
+description: Deploy the latest image in digital ocean droplet
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Execute docker ps on ocean droplet
+      run: |
+        doctl compute ssh ocean --ssh-command="docker ps"

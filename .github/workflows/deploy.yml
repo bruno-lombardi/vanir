@@ -19,7 +19,8 @@ jobs:
         run: |
           touch .id_rsa
           echo "$SSH_KEY" >> .id_rsa
-          cat .id_rsa
+          touch ~/.ssh/known_hosts
+          ssh-keyscan -H 159.203.116.135 >> ~/.ssh/known_hosts
       - name: Execute docker ps on digital ocean droplet
         run: |
           doctl compute ssh ocean --ssh-key-path="./.id_rsa" --ssh-command="docker ps"

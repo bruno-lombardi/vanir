@@ -9,10 +9,16 @@ jobs:
     steps:
       - name: get repository files
         uses: actions/checkout@v3
-      - name: Install doctl
+      - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: install private ssh key from secrets
+       env:
+          SSH_KEY: ${{ secrets.DROPLET_PRIVATE_SSH_KEY }}
+        run: |
+          touch .id_rsa
+          echo "$SSH_KEY" >> .id_rsa
       - name: Execute docker ps on ocean droplet
         run: |
-          doctl compute ssh ocean --ssh-command="docker ps"
+          doctl compute ssh ocean --ssh-key-path="./.id_rsa" --ssh-command="docker ps"

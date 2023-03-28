@@ -36,5 +36,6 @@ jobs:
             docker push brunolombardi/vanir:$VERSION
   deploy:
     name: "deploy"
+    runs-on: ubuntu-20.04
     uses: ./.github/actions/deploy
     secrets: inherit

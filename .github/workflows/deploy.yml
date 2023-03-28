@@ -14,7 +14,7 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: install private ssh key from secrets
-       env:
+        env:
           SSH_KEY: ${{ secrets.DROPLET_PRIVATE_SSH_KEY }}
         run: |
           touch .id_rsa

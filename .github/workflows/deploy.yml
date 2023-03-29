@@ -2,14 +2,6 @@ name: deploy
 
 on:
   workflow_call:
-    inputs:
-      version:
-        description: "a specificc tag"
-        type: string
-        required: true
-
-env:
-  VERSION: ${{ inputs.version }}
 
 jobs:
   deploy:
@@ -17,6 +9,10 @@ jobs:
     steps:
       - name: get repository files
         uses: actions/checkout@v3
+      - name: get version from commit
+        run: |
+          VERSION=$(git rev-parse --short HEAD)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:

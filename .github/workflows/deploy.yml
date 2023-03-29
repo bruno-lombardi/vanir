@@ -38,11 +38,24 @@ jobs:
           doctl compute ssh ocean --ssh-command="rm -f .env"
           doctl compute ssh ocean --ssh-command="touch .env"
           doctl compute ssh ocean --ssh-command="echo \"$ENV_FILE\" >> .env"
-      - name: docker run in droplet
-        run: |
-          doctl compute ssh ocean --ssh-command="if [ "$(docker ps -a | grep vanir)" ]; then docker stop vanir; fi"
-          doctl compute ssh ocean --ssh-command="if [ "$(docker ps -a | grep vanir)" ]; then docker rm vanir; fi"
-          doctl compute ssh ocean --ssh-command="docker run -d --name vanir --net senea-network -p 3333:3334 --env-file ./.env brunolombardi/vanir:$VERSION"
-      - name: check if container is running
-        run: |
-          doctl compute ssh ocean --ssh-command="if [ ! "$( docker container inspect -f '{{.State.Status}}' vanir )" == "running" ]; then exit 1; fi"
+      - name: delete previous containers
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 1
+          max_attempts: 3
+          command: |
+            doctl compute ssh ocean --ssh-command="if [ "$(docker ps -a | grep vanir)" ]; then docker stop vanir && docker rm vanir; fi;"
+      - name: run container
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 1
+          max_attempts: 3
+          command: |
+            doctl compute ssh ocean --ssh-command="docker run -d --name vanir --net senea-network -p 3333:3334 --env-file ./.env brunolombardi/vanir:$VERSION"
+      - name: health check
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 1
+          max_attempts: 3
+          command: |
+            doctl compute ssh ocean --ssh-command="if [ ! "$( docker container inspect -f '{{.State.Status}}' vanir )" == "running" ]; then exit 1; fi"          

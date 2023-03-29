@@ -44,7 +44,7 @@ func NewAuthServiceImpl(userRepository repositories.UserRepository, hasher crypt
 func (s *AuthServiceImpl) Authenticate(authCredentials *models.AuthCredentials) (*models.AuthenticationResponse, error) {
 	user, err := s.userRepository.FindByEmail(authCredentials.Email)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid credentials")
 	}
 
 	isCompareSuccessful := s.hasher.CompareHashes(user.Password, []byte(authCredentials.Password))
@@ -52,7 +52,7 @@ func (s *AuthServiceImpl) Authenticate(authCredentials *models.AuthCredentials) 
 	if !isCompareSuccessful {
 		return nil, &protocols.AppError{
 			StatusCode: 401,
-			Err:        fmt.Errorf("current password is invalid"),
+			Err:        fmt.Errorf("invalid credentials"),
 		}
 	}
 

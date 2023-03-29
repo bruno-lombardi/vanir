@@ -17,8 +17,8 @@ type UserEntity struct {
 	Name      string           `gorm:"type:VARCHAR(255)"`
 	Password  string           `gorm:"type:VARCHAR(128)"`
 	Favorites []FavoriteEntity `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	CreatedAt time.Time        `gorm:"column:created_at;type:datetime;not null;" json:"created_at"`
-	UpdatedAt time.Time        `gorm:"column:updated_at;type:datetime;not null;" json:"updated_at"`
+	CreatedAt time.Time        `gorm:"column:created_at;not null;" json:"created_at"`
+	UpdatedAt time.Time        `gorm:"column:updated_at;not null;" json:"updated_at"`
 }
 
 func (UserEntity) TableName() string {

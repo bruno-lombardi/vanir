@@ -19,6 +19,7 @@ jobs:
         run: |
           touch .id_rsa
           echo "$SSH_KEY" >> .id_rsa
+          mkdir .ssh
           cd ~/.ssh
           touch known_hosts
           cd ..

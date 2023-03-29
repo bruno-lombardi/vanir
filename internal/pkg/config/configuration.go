@@ -46,14 +46,16 @@ func Setup() {
 
 	var configuration *Configuration
 	path := os.Getenv("ENV_FILE")
+	if path != "" {
+		configLogger.Printf("loading env from file: %v\n", path)
+	}
 
-	configLogger.Printf("loading env from file: %v\n", path)
 	viper.SetConfigFile(path)
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file, %s", err)
+		configLogger.Printf("error reading config file, %s", err)
 	}
 
 	if err := viper.Unmarshal(&configuration); err != nil {

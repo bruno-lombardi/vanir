@@ -40,10 +40,10 @@ jobs:
         run: |
           doctl compute ssh ocean --ssh-command="rm -f .env"
           doctl compute ssh ocean --ssh-command="touch .env"
-          doctl compute ssh ocean --ssh-command="echo $ENV_FILE >> .env"
+          doctl compute ssh ocean --ssh-command="echo \"$ENV_FILE\" >> .env"
       - name: docker run in droplet
         run: |
-          doctl compute ssh ocean --ssh-command="docker run --name vanir --net senea-network -p 3333:3334 --env-file ./.env brunolombardi/vanir:$VERSION"
+          doctl compute ssh ocean --ssh-command="docker run -d --name vanir --net senea-network -p 3333:3334 --env-file ./.env brunolombardi/vanir:$VERSION"
       - name: check if container is running
         run: |
           doctl compute ssh ocean --ssh-command="if [ "$( docker container inspect -f '{{.State.Status}}' vanir )" != "running" ]; then exit 1; fi"

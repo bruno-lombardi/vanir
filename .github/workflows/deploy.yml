@@ -31,8 +31,9 @@ jobs:
           doctl compute ssh ocean --ssh-command="docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_TOKEN"
       - name: remove previous container if it exists
         run: |
-          doctl compute ssh ocean --ssh-command="[ "$(docker ps -a | grep vanir)" ] && docker stop vanir"
-          doctl compute ssh ocean --ssh-command="[ "$(docker ps -a | grep vanir)" ] && docker rm vanir"
+          doctl compute ssh ocean --ssh-command="if [ "$(docker ps -a | grep vanir)" ]; then docker stop vanir; fi"
+          doctl compute ssh ocean --ssh-command="if [ "$(docker ps -a | grep vanir)" ]; then docker rm vanir; fi"
+          exit 0
       - name: create env file
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}

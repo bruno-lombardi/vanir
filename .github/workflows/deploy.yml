@@ -44,7 +44,7 @@ jobs:
           timeout_minutes: 1
           max_attempts: 3
           command: |
-            doctl compute ssh ocean --ssh-command="if [ "$(docker ps -a | grep vanir)" ]; then docker stop vanir && docker rm vanir; fi;"
+            doctl compute ssh ocean --ssh-command="docker stop vanir || true && docker rm vanir || true"
       - name: run container
         uses: nick-invision/retry@v2
         with:

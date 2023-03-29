@@ -75,7 +75,7 @@ func (sut *AuthServiceSuite) TestShouldReturnErrorWhenInvalidPassword() {
 	sut.NotNil(err)
 	sut.Equal(&protocols.AppError{
 		StatusCode: 401,
-		Err:        fmt.Errorf("current password is invalid"),
+		Err:        fmt.Errorf("invalid credentials"),
 	}, err)
 	sut.userRepository.AssertCalled(sut.T(), "FindByEmail", "bruno@email.com.br")
 	sut.userRepository.AssertExpectations(sut.T())

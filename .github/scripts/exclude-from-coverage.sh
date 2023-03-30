@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo $(pwd)
+ls -la
 
 while read p || [ -n "$p" ] 
 do  

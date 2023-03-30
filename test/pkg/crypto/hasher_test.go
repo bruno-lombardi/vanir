@@ -29,11 +29,18 @@ func (sut *BCryptHasherSuite) TestShouldReturnAHashedString() {
 	sut.NotEqual(plain, hashed)
 }
 
-func (sut *BCryptHasherSuite) TestShouldReturnTrueWhenComparingHashes() {
+func (sut *BCryptHasherSuite) TestShouldReturnTrueWhenComparingMatchingHashes() {
 	plain := "a_string_to_hash"
 	hashed := sut.hasher.HashAndSalt([]byte(plain))
 	isCompareSuccessful := sut.hasher.CompareHashes(hashed, []byte(plain))
 	sut.True(isCompareSuccessful)
+}
+
+func (sut *BCryptHasherSuite) TestShouldReturnFalseWhenComparingUnmatchingHashes() {
+	plain := "a_string_to_hash"
+	hashed := sut.hasher.HashAndSalt([]byte(plain))
+	isCompareSuccessful := sut.hasher.CompareHashes(hashed, []byte("a_different_string_to_hash"))
+	sut.False(isCompareSuccessful)
 }
 
 func TestBCryptHasherSuite(t *testing.T) {

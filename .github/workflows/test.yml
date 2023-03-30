@@ -21,7 +21,7 @@ jobs:
         run: make dependencies
       - name: run unit tests
         run: make tests
-      - name: upload coverage report
+      - name: upload coverage report to codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.out

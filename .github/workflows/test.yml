@@ -11,9 +11,19 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - name: get repository files
+        uses: actions/checkout@v3
+      - name: setup go environment
+        uses: actions/setup-go@v3
+          with:
+            go-version: '^1.20.2'
+      - name: download dependencies
+        run: make dependencies
+      - name: run unit tests
+        run: make tests
+      - name: upload coverage report
+        uses: codecov/codecov-action@v3
         with:
-          go-version: '^1.20.2'
-      - run: make dependencies
-      - run: make tests
+          files: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella

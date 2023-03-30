@@ -8,4 +8,4 @@ dependencies:
 	go mod download
 
 tests:
-	ENV_FILE=$(shell pwd)/.env.test go test -v ./test/... -race -coverpkg=./... -coverprofile=coverage.out
+	ENV_FILE=$(shell pwd)/.env.test go test -v ./test/... -race -coverpkg=./... -coverprofile=coverage.out -covermode=atomic

@@ -22,8 +22,8 @@ RUN apk add ca-certificates
 
 COPY --from=build_base /build/out/app /app/vanir
 
-# This container exposes port 3333 to the outside world
-EXPOSE 3333
+# This container exposes port 3334 to the outside world
+EXPOSE 3334
 
 # Run the binary program produced by `go install`
 CMD ["/app/vanir"]

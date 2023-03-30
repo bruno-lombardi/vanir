@@ -51,7 +51,7 @@ jobs:
           timeout_minutes: 1
           max_attempts: 3
           command: |
-            doctl compute ssh ocean --ssh-command="docker run -d --name vanir --net senea-network -p 3334:3333 --env-file ./.env brunolombardi/vanir:$VERSION"
+            doctl compute ssh ocean --ssh-command="docker run -d --name vanir --net senea-network -p 3334:3334 --env-file ./.env brunolombardi/vanir:$VERSION"
       - name: health check
         uses: nick-invision/retry@v2
         with:

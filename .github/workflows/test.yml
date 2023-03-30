@@ -2,6 +2,9 @@ name: test
 run-name: running unit tests for pull request ${{ github.event.pull_request.head.ref }}
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
@@ -21,6 +24,8 @@ jobs:
         run: make dependencies
       - name: run unit tests
         run: make tests
+      - name: exclude from coverage
+        run: ./.github/scripts/exclude-from-coverage.sh
       - name: upload coverage report to codecov
         uses: codecov/codecov-action@v3
         with:

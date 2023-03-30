@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo $(pwd)
+
 while read p || [ -n "$p" ] 
 do  
 sed -i '' "/${p//\//\\/}/d" ./coverage.txt

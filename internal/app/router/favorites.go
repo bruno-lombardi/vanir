@@ -14,9 +14,15 @@ func SetupFavoritesRoutes(r *echo.Group) {
 	favoriteService := services.GetFavoriteService()
 	authenticatedMiddleware := middlewares.GetAuthenticatedMiddleware()
 	addFavoriteController := controllers.NewAddFavoriteController(favoriteService)
+	removeFavoriteController := controllers.NewRemoveFavoriteController(favoriteService)
 
 	r.POST("",
 		adapters.AdaptControllerToEchoJSON(addFavoriteController, &models.CreateFavoriteParams{}),
+		adapters.AdaptMiddlewareToEcho(authenticatedMiddleware, nil),
+	)
+
+	r.DELETE("/:reference",
+		adapters.AdaptControllerToEchoJSON(removeFavoriteController, nil),
 		adapters.AdaptMiddlewareToEcho(authenticatedMiddleware, nil),
 	)
 }

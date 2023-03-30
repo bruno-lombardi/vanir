@@ -9,7 +9,7 @@ import (
 type FavoriteService interface {
 	Create(params *models.CreateFavoriteParams) (*models.Favorite, error)
 	Get(ID string) (*models.Favorite, error)
-	Delete(ID string) error
+	Delete(params *models.DeleteFavoriteParams) error
 }
 
 type FavoriteServiceImpl struct {
@@ -62,7 +62,7 @@ func (s *FavoriteServiceImpl) Get(ID string) (*models.Favorite, error) {
 	}, err
 }
 
-func (s *FavoriteServiceImpl) Delete(ID string) error {
-	err := s.favoritesRepository.Delete(ID)
+func (s *FavoriteServiceImpl) Delete(params *models.DeleteFavoriteParams) error {
+	err := s.favoritesRepository.DeleteByUserIDAndReference(params.UserID, params.Reference)
 	return err
 }

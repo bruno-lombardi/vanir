@@ -8,4 +8,4 @@ dependencies:
 	go mod download
 
 tests:
-	ENV_FILE=$(shell pwd)/.env.test go test -v ./test/... -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic
+	ENV_FILE=$(shell pwd)/.env.test go test -v ./test/... -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic && ./.github/scripts/exclude-from-coverage.sh

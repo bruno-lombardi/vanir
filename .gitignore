@@ -1,4 +1,5 @@
 vanir.db
 .env
 coverage.out
+coverage.txt
 coverage.html

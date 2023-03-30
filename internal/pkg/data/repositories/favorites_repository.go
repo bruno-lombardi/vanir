@@ -1,11 +1,13 @@
 package repositories
 
 import (
+	"net/http"
 	"sync"
 	"time"
 	"vanir/internal/pkg/data/db"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
+	"vanir/internal/pkg/protocols"
 
 	"gorm.io/gorm"
 )
@@ -45,6 +47,7 @@ type FavoritesRepository interface {
 	Get(ID string) (*FavoriteEntity, error)
 	FindAllByUserID(userID string, page int, limit int) ([]FavoriteEntity, int64, error)
 	Create(params *models.CreateFavoriteParams) (*FavoriteEntity, error)
+	DeleteByUserIDAndReference(userID string, reference string) error
 	Delete(ID string) error
 }
 
@@ -91,11 +94,23 @@ func (r *FavoritesRepositoryImpl) FindAllByUserID(userID string, page int, limit
 }
 
 func (r *FavoritesRepositoryImpl) Create(params *models.CreateFavoriteParams) (*FavoriteEntity, error) {
+	existentFavorite := &FavoriteEntity{}
+
+	r.db.Where(&FavoriteEntity{
+		UserID:    params.UserID,
+		Reference: params.Reference,
+	}).First(&existentFavorite)
+
+	if existentFavorite.ID != "" {
+		return existentFavorite, nil
+	}
+
 	favorite := &FavoriteEntity{
 		Type:      FavoriteType(params.Type),
 		Reference: params.Reference,
 		UserID:    params.UserID,
 	}
+
 	result := r.db.Create(&favorite)
 
 	if result.Error != nil {
@@ -109,5 +124,13 @@ func (r *FavoritesRepositoryImpl) Delete(ID string) error {
 	favorite := &FavoriteEntity{ID: ID}
 	result := r.db.Delete(&favorite)
 
+	return result.Error
+}
+
+func (r *FavoritesRepositoryImpl) DeleteByUserIDAndReference(userID string, reference string) error {
+	result := r.db.Where(&FavoriteEntity{UserID: userID, Reference: reference}).Delete(&FavoriteEntity{})
+	if result.RowsAffected == 0 {
+		return protocols.NewAppError("favorite not found", http.StatusNotFound)
+	}
 	return result.Error
 }

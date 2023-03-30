@@ -16,3 +16,8 @@ type CreateFavoriteParams struct {
 	Reference string `json:"reference" validate:"required"`
 	UserID    string
 }
+
+type DeleteFavoriteParams struct {
+	Reference string
+	UserID    string
+}

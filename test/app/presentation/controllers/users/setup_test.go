@@ -6,7 +6,7 @@ import (
 	"vanir/internal/pkg/config"
 	"vanir/internal/pkg/data/db"
 	data_test "vanir/test/data"
-	"vanir/test/data/mocks"
+	"vanir/test/mocks"
 )
 
 type ControllerTestCase = data_test.ControllerTestCase

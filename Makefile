@@ -9,6 +9,3 @@ dependencies:
 
 tests:
 	ENV_FILE=$(shell pwd)/.env.test go test -v ./test/... -race -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic
-
-exclude-coverage:
-	./.github/scripts/exclude-from-coverage.sh

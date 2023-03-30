@@ -7,7 +7,7 @@ import (
 	"vanir/internal/app/presentation/middlewares"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/protocols"
-	"vanir/test/data/mocks"
+	"vanir/test/mocks"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"

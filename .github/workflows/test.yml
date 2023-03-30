@@ -2,11 +2,8 @@ name: test
 run-name: running unit tests for pull request ${{ github.event.pull_request.head.ref }}
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, closed, synchronize, reopened]
     branches:
       - main
 

@@ -1,23 +1,23 @@
-package crypto_tests
+package crypto
 
 import (
+	"fmt"
 	"testing"
-	"vanir/internal/pkg/crypto"
 
 	"github.com/stretchr/testify/suite"
 )
 
 type BCryptHasherSuite struct {
 	suite.Suite
-	hasher *crypto.BCryptHasher
+	hasher *BCryptHasher
 }
 
 func (sut *BCryptHasherSuite) BeforeTest(_, _ string) {
-	sut.hasher = &crypto.BCryptHasher{}
+	sut.hasher = GetHasher().(*BCryptHasher)
 }
 
 func (sut *BCryptHasherSuite) TestSmokeGetHasher() {
-	hasher, ok := crypto.GetHasher().(*crypto.BCryptHasher)
+	hasher, ok := GetHasher().(*BCryptHasher)
 	sut.NotNil(hasher)
 	sut.True(ok)
 }
@@ -27,6 +27,20 @@ func (sut *BCryptHasherSuite) TestShouldReturnAHashedString() {
 	hashed := sut.hasher.HashAndSalt([]byte(plain))
 	sut.NotEmpty(hashed)
 	sut.NotEqual(plain, hashed)
+}
+
+func (sut *BCryptHasherSuite) TestShouldReturnErrorIfHashFails() {
+	initialGenerateFromPassword := generateFromPassword
+	generateFromPassword = func(password []byte, cost int) ([]byte, error) {
+		return []byte{}, fmt.Errorf("error generating hash")
+	}
+	defer func() {
+		generateFromPassword = initialGenerateFromPassword
+	}()
+
+	plain := "a_string_to_hash"
+	hashed := sut.hasher.HashAndSalt([]byte(plain))
+	sut.Empty(hashed)
 }
 
 func (sut *BCryptHasherSuite) TestShouldReturnTrueWhenComparingMatchingHashes() {

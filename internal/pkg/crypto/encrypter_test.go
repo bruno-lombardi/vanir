@@ -54,6 +54,29 @@ func (sut *JWTEncrypterSuite) TestShouldReturnEmptyWhenSigningFails() {
 	signerMock.AssertExpectations(sut.T())
 }
 
+func (sut *JWTEncrypterSuite) TestShouldParseAndValidateTokenAndReturnSubject() {
+	subject := "u_uu12312012"
+	token, _ := sut.encrypter.CreateToken(subject)
+	valid, parsed := sut.encrypter.ValidateToken(token)
+	sut.Equal(subject, parsed)
+	sut.True(valid)
+}
+
+func (sut *JWTEncrypterSuite) TestShouldReturnEmptySubjectWhenInvalidToken() {
+	initialParseToken := parseToken
+	parseToken = func(tokenString string, keyFunc jwt.Keyfunc, options ...jwt.ParserOption) (*jwt.Token, error) {
+		return nil, fmt.Errorf("error parsing token")
+	}
+	defer func() {
+		parseToken = initialParseToken
+	}()
+
+	token := "invalid_token"
+	valid, parsed := sut.encrypter.ValidateToken(token)
+	sut.Empty(parsed)
+	sut.False(valid)
+}
+
 func TestJWTEncrypterSuite(t *testing.T) {
 	suite.Run(t, &JWTEncrypterSuite{})
 }

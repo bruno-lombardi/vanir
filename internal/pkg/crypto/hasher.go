@@ -15,17 +15,19 @@ type Hasher interface {
 type BCryptHasher struct{}
 
 var bCryptHasher *BCryptHasher
+var generateFromPassword func(password []byte, cost int) ([]byte, error)
 var hasherOnce sync.Once
 
 func GetHasher() Hasher {
 	hasherOnce.Do(func() {
 		bCryptHasher = &BCryptHasher{}
+		generateFromPassword = bcrypt.GenerateFromPassword
 	})
 	return bCryptHasher
 }
 
 func (h *BCryptHasher) HashAndSalt(value []byte) string {
-	hash, err := bcrypt.GenerateFromPassword(value, bcrypt.MinCost)
+	hash, err := generateFromPassword(value, bcrypt.MinCost)
 	if err != nil {
 		log.Println(err)
 	}

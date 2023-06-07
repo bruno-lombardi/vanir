@@ -3,7 +3,7 @@ run-name: running unit tests for pull request ${{ github.event.pull_request.head
 
 on:
   pull_request:
-    types: [opened, closed, synchronize, reopened]
+    types: [opened, synchronize, reopened]
     branches:
       - main
 

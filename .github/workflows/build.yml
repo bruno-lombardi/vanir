@@ -3,7 +3,7 @@ run-name: build, push and deploy ${{ github.event.pull_request.head.ref }}
 
 on:
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, closed]
     branches:
       - main
 

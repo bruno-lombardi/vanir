@@ -1,6 +1,7 @@
 name: "Code Scanning - Action"
 
 on:
+  push:
   pull_request:
     types: [opened, closed, synchronize, reopened]
     branches: [main]

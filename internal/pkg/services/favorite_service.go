@@ -19,9 +19,9 @@ type FavoriteServiceImpl struct {
 var favoriteService *FavoriteServiceImpl
 var favoriteServiceOnce sync.Once
 
-func GetFavoriteService() FavoriteService {
+func GetFavoriteService(favoritesRepository repositories.FavoritesRepository) FavoriteService {
 	favoriteServiceOnce.Do(func() {
-		favoriteService = NewFavoriteServiceImpl(repositories.GetFavoritesRepository())
+		favoriteService = NewFavoriteServiceImpl(favoritesRepository)
 	})
 	return favoriteService
 }

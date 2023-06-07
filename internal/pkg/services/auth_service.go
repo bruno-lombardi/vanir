@@ -22,13 +22,9 @@ type AuthServiceImpl struct {
 var authService *AuthServiceImpl
 var authServiceOnce sync.Once
 
-func GetAuthService() AuthService {
+func GetAuthService(userRepository repositories.UserRepository, hasher crypto.Hasher, encrypter crypto.Encrypter) AuthService {
 	authServiceOnce.Do(func() {
-		authService = &AuthServiceImpl{
-			userRepository: repositories.GetUserRepository(),
-			hasher:         crypto.GetHasher(),
-			encrypter:      crypto.GetEncrypter(),
-		}
+		authService = NewAuthServiceImpl(userRepository, hasher, encrypter)
 	})
 	return authService
 }

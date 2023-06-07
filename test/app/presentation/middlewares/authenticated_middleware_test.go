@@ -32,6 +32,10 @@ func (sut *AuthMiddlewareSuite) AfterTest(_, _ string) {
 	sut.encrypter.On("ValidateToken", mock.Anything).Unset()
 }
 
+func (sut *AuthMiddlewareSuite) TestSmokeTest() {
+	sut.NotNil(middlewares.GetAuthenticatedMiddleware(&mocks.EncrypterMock{}, &mocks.UserServiceMock{}))
+}
+
 func (sut *AuthMiddlewareSuite) TestShouldNotReturnErrorIfAuthorizationTokenIsValid() {
 	sut.encrypter.On("ValidateToken", mock.Anything).Return(true, "u_uhu13oasjdf")
 	sut.userService.On("Get", mock.Anything).Return(&models.User{ID: "u_uhu13oasjdf"}, nil)
@@ -73,6 +77,21 @@ func (sut *AuthMiddlewareSuite) TestShouldReturnErrorIfAuthorizationTokenIsInval
 
 	sut.encrypter.AssertCalled(sut.T(), "ValidateToken", token)
 	sut.userService.AssertNotCalled(sut.T(), "Get", mock.Anything)
+}
+
+func (sut *AuthMiddlewareSuite) TestShouldReturnErrorIfIfNoAuthorizationHeaderIsSent() {
+	req := &protocols.HttpRequest{
+		HttpReq: &http.Request{
+			Header: map[string][]string{
+				"Content-Type":  {"application/json"},
+				"Authorization": {""},
+			},
+		},
+	}
+	err := sut.authMiddleware.Handle(req)
+
+	sut.NotNil(err)
+	sut.Equal(http.StatusUnauthorized, err.(*protocols.AppError).StatusCode)
 }
 
 func (sut *AuthMiddlewareSuite) TestShouldReturnErrorIfUserIsNotFoundAsSubject() {

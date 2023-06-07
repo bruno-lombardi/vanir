@@ -24,9 +24,9 @@ type CryptoServiceImpl struct {
 var cryptoService *CryptoServiceImpl
 var cryptoServiceOnce sync.Once
 
-func GetCryptoService() CryptoService {
+func GetCryptoService(client *clients.CryptoCompareHttpClient, favoritesRepository repositories.FavoritesRepository) CryptoService {
 	cryptoServiceOnce.Do(func() {
-		cryptoService = NewCryptoServiceImpl(clients.NewCryptoCompareHttpClient(), repositories.GetFavoritesRepository())
+		cryptoService = NewCryptoServiceImpl(client, favoritesRepository)
 	})
 	return cryptoService
 }

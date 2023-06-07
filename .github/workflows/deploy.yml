@@ -11,10 +11,9 @@ jobs:
     steps:
       - name: get repository files
         uses: actions/checkout@v3
-      - name: get version from commit
+      - name: print version from commit
         run: |
-          VERSION=$(git rev-parse --short HEAD)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "New version is $VERSION"
       - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:

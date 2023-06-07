@@ -68,7 +68,7 @@ func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {
 	sut.hasher.AssertExpectations(sut.T())
 }
 
-func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFails() {
+func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFailsOnCreateUser() {
 	sut.hasher.On("HashAndSalt", mock.Anything).Return("$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O")
 	sut.userRepository.On("Create", mock.Anything).Return(
 		nil,
@@ -94,6 +94,21 @@ func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFails() {
 	sut.userRepository.AssertExpectations(sut.T())
 	sut.hasher.AssertCalled(sut.T(), "HashAndSalt", []byte("123456"))
 	sut.hasher.AssertExpectations(sut.T())
+}
+
+func (sut *UserServiceSuite) TestShouldGetUserSuccessful() {
+	id := helpers.ID("u")
+	sut.userRepository.On("Get", mock.Anything).Return(
+		&repositories.UserEntity{ID: id, Name: "Bruno", Email: "bruno@email.com.br", Password: "$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O"},
+		nil,
+	)
+
+	user, err := sut.userService.Get(id)
+
+	sut.Nil(err)
+	sut.Equal(user.ID, id)
+
+	sut.userRepository.AssertExpectations(sut.T())
 }
 
 func (sut *UserServiceSuite) TestShouldUpdateUserWhenValidData() {

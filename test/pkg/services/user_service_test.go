@@ -34,6 +34,10 @@ func (sut *UserServiceSuite) AfterTest(_, _ string) {
 	sut.hasher.On("CompareHashes", mock.Anything).Unset()
 }
 
+func (sut *UserServiceSuite) TestSmokeTest() {
+	sut.NotNil(services.GetUserService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}))
+}
+
 func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {
 	id := helpers.ID("u")
 	sut.hasher.On("HashAndSalt", mock.Anything).Return("$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O")

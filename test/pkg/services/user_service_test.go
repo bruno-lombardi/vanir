@@ -34,6 +34,10 @@ func (sut *UserServiceSuite) AfterTest(_, _ string) {
 	sut.hasher.On("CompareHashes", mock.Anything).Unset()
 }
 
+func (sut *UserServiceSuite) TestSmokeTest() {
+	sut.NotNil(services.GetUserService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}))
+}
+
 func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {
 	id := helpers.ID("u")
 	sut.hasher.On("HashAndSalt", mock.Anything).Return("$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O")
@@ -64,7 +68,7 @@ func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {
 	sut.hasher.AssertExpectations(sut.T())
 }
 
-func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFails() {
+func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFailsOnCreateUser() {
 	sut.hasher.On("HashAndSalt", mock.Anything).Return("$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O")
 	sut.userRepository.On("Create", mock.Anything).Return(
 		nil,
@@ -90,6 +94,21 @@ func (sut *UserServiceSuite) TestShouldReturnErrorIfUserRepositoryFails() {
 	sut.userRepository.AssertExpectations(sut.T())
 	sut.hasher.AssertCalled(sut.T(), "HashAndSalt", []byte("123456"))
 	sut.hasher.AssertExpectations(sut.T())
+}
+
+func (sut *UserServiceSuite) TestShouldGetUserSuccessful() {
+	id := helpers.ID("u")
+	sut.userRepository.On("Get", mock.Anything).Return(
+		&repositories.UserEntity{ID: id, Name: "Bruno", Email: "bruno@email.com.br", Password: "$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O"},
+		nil,
+	)
+
+	user, err := sut.userService.Get(id)
+
+	sut.Nil(err)
+	sut.Equal(user.ID, id)
+
+	sut.userRepository.AssertExpectations(sut.T())
 }
 
 func (sut *UserServiceSuite) TestShouldUpdateUserWhenValidData() {
@@ -126,6 +145,79 @@ func (sut *UserServiceSuite) TestShouldUpdateUserWhenValidData() {
 	})
 	sut.userRepository.AssertExpectations(sut.T())
 	sut.hasher.AssertCalled(sut.T(), "HashAndSalt", []byte("654321"))
+	sut.hasher.AssertExpectations(sut.T())
+}
+
+func (sut *UserServiceSuite) TestShouldFailUpdateUserWhenRepositoryFails() {
+	sut.userRepository.On("Get", mock.Anything).Return(
+		nil,
+		fmt.Errorf("error when get user"),
+	)
+
+	user, err := sut.userService.Update(&models.UpdateUserParams{
+		Name:                    "Bruno",
+		Email:                   "bruno@email.com.br",
+		CurrentPassword:         "123456",
+		NewPassword:             "654321",
+		NewPasswordConfirmation: "654321",
+	})
+
+	sut.NotNil(err)
+	sut.Nil(user)
+
+	sut.userRepository.AssertExpectations(sut.T())
+}
+
+func (sut *UserServiceSuite) TestShouldFailUpdateUserWhenPasswordIsInvalid() {
+	id := helpers.ID("u")
+	sut.hasher.On("CompareHashes", mock.Anything, mock.Anything).Return(false)
+	sut.userRepository.On("Get", mock.Anything).Return(
+		&repositories.UserEntity{ID: id, Name: "Bruno", Email: "bruno@email.com.br", Password: "$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O"},
+		nil,
+	)
+
+	user, err := sut.userService.Update(&models.UpdateUserParams{
+		Name:                    "Bruno",
+		Email:                   "bruno@email.com.br",
+		CurrentPassword:         "123456",
+		NewPassword:             "654321",
+		NewPasswordConfirmation: "654321",
+	})
+
+	sut.NotNil(err)
+	sut.Nil(user)
+	sut.ErrorContains(err, "current password is invalid")
+
+	sut.userRepository.AssertExpectations(sut.T())
+	sut.hasher.AssertExpectations(sut.T())
+}
+
+func (sut *UserServiceSuite) TestShouldFailUpdateUserWhenRepositoryUpdateFails() {
+	id := helpers.ID("u")
+	sut.hasher.On("CompareHashes", mock.Anything, mock.Anything).Return(true)
+	sut.hasher.On("HashAndSalt", mock.Anything).Return("$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O")
+	sut.userRepository.On("Get", mock.Anything).Return(
+		&repositories.UserEntity{ID: id, Name: "Bruno", Email: "bruno@email.com.br", Password: "$2a$12$rWgChwk828BWU3bRWEx6M.WlLRNisVPsL47hH7ilYcaE4NxNFQw/O"},
+		nil,
+	)
+	sut.userRepository.On("Update", mock.Anything).Return(
+		nil,
+		fmt.Errorf("error on update"),
+	)
+
+	user, err := sut.userService.Update(&models.UpdateUserParams{
+		Name:                    "Bruno",
+		Email:                   "bruno@email.com.br",
+		CurrentPassword:         "123456",
+		NewPassword:             "654321",
+		NewPasswordConfirmation: "654321",
+	})
+
+	sut.NotNil(err)
+	sut.Nil(user)
+	sut.ErrorContains(err, "error on update")
+
+	sut.userRepository.AssertExpectations(sut.T())
 	sut.hasher.AssertExpectations(sut.T())
 }
 

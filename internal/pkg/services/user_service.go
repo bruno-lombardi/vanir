@@ -21,12 +21,9 @@ type UserServiceImpl struct {
 
 var userService *UserServiceImpl
 
-func GetUserService() UserService {
+func GetUserService(userRepository repositories.UserRepository, hasher crypto.Hasher) UserService {
 	if userService == nil {
-		userService = &UserServiceImpl{
-			userRepository: repositories.GetUserRepository(),
-			hasher:         crypto.GetHasher(),
-		}
+		userService = NewUserServiceImpl(userRepository, hasher)
 	}
 	return userService
 }

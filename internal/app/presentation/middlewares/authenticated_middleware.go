@@ -17,9 +17,9 @@ type AuthenticatedMiddleware struct {
 var authenticatedMiddleware *AuthenticatedMiddleware
 var authenticatedMiddlewareOnce sync.Once
 
-func GetAuthenticatedMiddleware() *AuthenticatedMiddleware {
+func GetAuthenticatedMiddleware(encrypter crypto.Encrypter, userService services.UserService) *AuthenticatedMiddleware {
 	authenticatedMiddlewareOnce.Do(func() {
-		authenticatedMiddleware = NewAuthenticatedMiddleware(crypto.GetEncrypter(), services.GetUserService())
+		authenticatedMiddleware = NewAuthenticatedMiddleware(encrypter, userService)
 	})
 	return authenticatedMiddleware
 }

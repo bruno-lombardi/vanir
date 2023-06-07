@@ -36,6 +36,10 @@ func (sut *AuthServiceSuite) AfterTest(_, _ string) {
 	sut.encrypter.On("CreateToken", mock.Anything).Unset()
 }
 
+func (sut *AuthServiceSuite) TestSmokeAuthService() {
+	sut.NotNil(services.GetAuthService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}, &mocks.EncrypterMock{}))
+}
+
 func (sut *AuthServiceSuite) TestShouldReturnTokenWhenValidCredentials() {
 	id := helpers.ID("u")
 	sut.userRepository.On("FindByEmail", mock.Anything).Return(

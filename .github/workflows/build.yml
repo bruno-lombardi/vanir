@@ -11,6 +11,9 @@ jobs:
   build:
     name: "build"
     runs-on: ubuntu-20.04
+    outputs:
+      version: ${{ steps.semantic.outputs.release-version }}
+      new-release-published: ${{ steps.semantic.outputs.new-release-published }}
     steps:
       - name: get repository files
         uses: actions/checkout@v3
@@ -58,6 +61,7 @@ jobs:
             docker push brunolombardi/vanir:$VERSION
   deploy:
     needs: [build]
+    if: needs.build.outputs.new-release-published == 'true'
     name: "deploy"
     uses: ./.github/workflows/deploy.yml
     secrets: inherit

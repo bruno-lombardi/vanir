@@ -92,6 +92,8 @@ func (sut *AuthMiddlewareSuite) TestShouldReturnErrorIfIfNoAuthorizationHeaderIs
 
 	sut.NotNil(err)
 	sut.Equal(http.StatusUnauthorized, err.(*protocols.AppError).StatusCode)
+
+	sut.encrypter.AssertNotCalled(sut.T(), "ValidateToken", "")
 }
 
 func (sut *AuthMiddlewareSuite) TestShouldReturnErrorIfUserIsNotFoundAsSubject() {

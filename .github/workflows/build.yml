@@ -64,3 +64,5 @@ jobs:
     name: "deploy"
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
+    with:
+      version: ${{ needs.build.outputs.version }}

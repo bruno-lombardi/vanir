@@ -2,6 +2,11 @@ name: deploy
 
 on:
   workflow_call:
+    inputs:
+      version:
+        description: 'The version to deploy'
+        required: true
+        type: string
 
 jobs:
   deploy:
@@ -11,9 +16,9 @@ jobs:
     steps:
       - name: get repository files
         uses: actions/checkout@v3
-      - name: print version from commit
+      - name: the version
         run: |
-          echo "New version is $VERSION"
+          echo "Deploying vanir v${{ inputs.version }}"
       - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -50,6 +55,7 @@ jobs:
           timeout_minutes: 1
           max_attempts: 3
           command: |
+            VERSION=${{ inputs.version }}
             doctl compute ssh ocean --ssh-command="docker run -d --name vanir --net senea-network -p 3334:3334 --env-file ./.env brunolombardi/vanir:$VERSION"
       - name: health check
         uses: nick-invision/retry@v2

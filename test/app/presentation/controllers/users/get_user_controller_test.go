@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func RunGetUserControllerTestCases(t *testing.T) {
+func TestRunGetUserControllerTestCases(t *testing.T) {
 	controllerTestCases := []ControllerTestCase{
 		{
 			Name: "Should return user when service returns the user with valid id",

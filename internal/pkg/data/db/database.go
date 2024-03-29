@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"os"
 	"time"
 	"vanir/internal/pkg/config"
 
@@ -46,12 +47,15 @@ func SetupDB() {
 		}
 	} else { // Not implemented
 		err = fmt.Errorf("other drivers not implemented")
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
 		fmt.Println("error setting up db: ", err)
 	}
+
 	sqlDB.SetMaxIdleConns(conf.Database.MaxIdleConns)
 	sqlDB.SetMaxOpenConns(conf.Database.MaxOpenConns)
 	sqlDB.SetConnMaxLifetime(time.Duration(conf.Database.MaxLifetime) * time.Second)

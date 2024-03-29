@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func RunCreateUserControllerTestCases(t *testing.T) {
+func TestRunCreateUserControllerTestCases(t *testing.T) {
 	controllerTestCases := []ControllerTestCase{
 		{
 			Name: "Should create user with valid data",

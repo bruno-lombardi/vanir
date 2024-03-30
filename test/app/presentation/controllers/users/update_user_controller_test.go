@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func RunUpdateUserControllerTestCases(t *testing.T) {
+func TestRunUpdateUserControllerTestCases(t *testing.T) {
 	controllerTestCases := []ControllerTestCase{
 		{
 			Name: "Should update user with valid data",

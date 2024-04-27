@@ -1,4 +1,4 @@
-package services_test
+package services
 
 import (
 	"fmt"
@@ -7,7 +7,6 @@ import (
 	"vanir/internal/pkg/data/repositories"
 	"vanir/internal/pkg/helpers"
 	"vanir/internal/pkg/protocols"
-	"vanir/internal/pkg/services"
 	"vanir/test/mocks"
 
 	"github.com/stretchr/testify/mock"
@@ -16,7 +15,7 @@ import (
 
 type AuthServiceSuite struct {
 	suite.Suite
-	authService    *services.AuthServiceImpl
+	authService    *AuthServiceImpl
 	userRepository *mocks.UserRepositoryMock
 	hasher         *mocks.HasherMock
 	encrypter      *mocks.EncrypterMock
@@ -27,7 +26,7 @@ func (sut *AuthServiceSuite) BeforeTest(_, _ string) {
 	sut.hasher = &mocks.HasherMock{}
 	sut.encrypter = &mocks.EncrypterMock{}
 
-	sut.authService = services.NewAuthServiceImpl(sut.userRepository, sut.hasher, sut.encrypter)
+	sut.authService = NewAuthServiceImpl(sut.userRepository, sut.hasher, sut.encrypter)
 }
 
 func (sut *AuthServiceSuite) AfterTest(_, _ string) {
@@ -37,7 +36,7 @@ func (sut *AuthServiceSuite) AfterTest(_, _ string) {
 }
 
 func (sut *AuthServiceSuite) TestSmokeAuthService() {
-	sut.NotNil(services.GetAuthService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}, &mocks.EncrypterMock{}))
+	sut.NotNil(GetAuthService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}, &mocks.EncrypterMock{}))
 }
 
 func (sut *AuthServiceSuite) TestShouldReturnTokenWhenValidCredentials() {

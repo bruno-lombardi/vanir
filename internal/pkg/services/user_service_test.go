@@ -1,4 +1,4 @@
-package services_test
+package services
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/data/repositories"
 	"vanir/internal/pkg/helpers"
-	"vanir/internal/pkg/services"
 	"vanir/test/mocks"
 
 	"github.com/stretchr/testify/mock"
@@ -15,7 +14,7 @@ import (
 
 type UserServiceSuite struct {
 	suite.Suite
-	userService    *services.UserServiceImpl
+	userService    *UserServiceImpl
 	userRepository *mocks.UserRepositoryMock
 	hasher         *mocks.HasherMock
 }
@@ -24,7 +23,7 @@ func (sut *UserServiceSuite) BeforeTest(_, _ string) {
 	sut.userRepository = &mocks.UserRepositoryMock{}
 	sut.hasher = &mocks.HasherMock{}
 
-	sut.userService = services.NewUserServiceImpl(sut.userRepository, sut.hasher)
+	sut.userService = NewUserServiceImpl(sut.userRepository, sut.hasher)
 }
 
 func (sut *UserServiceSuite) AfterTest(_, _ string) {
@@ -35,7 +34,7 @@ func (sut *UserServiceSuite) AfterTest(_, _ string) {
 }
 
 func (sut *UserServiceSuite) TestSmokeTest() {
-	sut.NotNil(services.GetUserService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}))
+	sut.NotNil(GetUserService(&mocks.UserRepositoryMock{}, &mocks.HasherMock{}))
 }
 
 func (sut *UserServiceSuite) TestShouldCreateUserWhenValidData() {

@@ -20,7 +20,7 @@ import (
 )
 
 // @title Vanir
-// @version 1.0.1
+// @version 1.2.0
 // @description This is an API used to track crypto currencies prices and manage your favorites
 
 // @contact.name Bruno Lombardi

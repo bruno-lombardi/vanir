@@ -14,7 +14,10 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o ./out/app ./cmd/app/main.go
+RUN go build -o ./out/app ./main.go
+RUN go get -d github.com/swaggo/swag/cmd/swag
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN make docs
 
 # Start fresh from a smaller image
 FROM alpine:3.9

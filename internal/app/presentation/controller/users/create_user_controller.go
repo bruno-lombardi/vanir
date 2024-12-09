@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"net/http"
@@ -17,6 +17,15 @@ func NewCreateUserController(userService services.UserService) *CreateUserContro
 	}
 }
 
+// CreateUserController godoc
+// @Summary Create new user
+// @Description Creates a new user with the provided information.
+// @Tags users
+// @Accept application/json
+// @Produce json
+// @Param request body models.CreateUserParams true "create user params"
+// @Success 200 {object} models.User
+// @Router /v1/users [POST]
 func (c *CreateUserController) Handle(req *protocols.HttpRequest) (*protocols.HttpResponse, error) {
 	createUserParams := req.Body.(*models.CreateUserParams)
 

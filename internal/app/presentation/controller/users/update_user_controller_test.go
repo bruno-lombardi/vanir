@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"fmt"
@@ -9,16 +9,13 @@ import (
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
 	"vanir/internal/pkg/protocols"
-	data_test "vanir/test/data"
 	mocks "vanir/test/mocks"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-type ControllerTestCase data_test.ControllerTestCase
-
-func TestGetUserControllerTestCases(t *testing.T) {
+func TestRunUpdateUserControllerTestCases(t *testing.T) {
 	config.Setup()
 	db.SetupDB()
 
@@ -26,15 +23,19 @@ func TestGetUserControllerTestCases(t *testing.T) {
 
 	controllerTestCases := []ControllerTestCase{
 		{
-			Name: "Should return user when service returns the user with valid id",
+			Name: "Should update user with valid data",
 			WhenRequest: &protocols.HttpRequest{
-				PathParams: map[string]string{
-					"id": "123",
+				Body: &models.UpdateUserParams{
+					Name:                    "Bruno Lombardi",
+					Email:                   "bruno@email.com",
+					CurrentPassword:         "123456",
+					NewPassword:             "654321",
+					NewPasswordConfirmation: "654321",
 				},
 			},
 			BeforeTest: func() error {
 				user := &models.User{ID: helpers.ID("u"), Email: "bruno@email.com", Password: "654321", Name: "Bruno Lombardi"}
-				userServiceMock.On("Get", mock.Anything).Return(user, nil)
+				userServiceMock.On("Update", mock.Anything).Return(user, nil)
 				return nil
 			},
 			ExpectResponse: func(t *testing.T, response *protocols.HttpResponse) error {
@@ -46,21 +47,25 @@ func TestGetUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			AfterTest: func() error {
-				userServiceMock.AssertCalled(t, "Get", "123")
+				userServiceMock.AssertCalled(t, "Update", &models.UpdateUserParams{
+					Name:                    "Bruno Lombardi",
+					Email:                   "bruno@email.com",
+					CurrentPassword:         "123456",
+					NewPassword:             "654321",
+					NewPasswordConfirmation: "654321",
+				})
 				userServiceMock.AssertExpectations(t)
-				userServiceMock.On("Get", mock.Anything).Unset()
+				userServiceMock.On("Update", mock.Anything).Unset()
 				return nil
 			},
 		},
 		{
-			Name: "Should not return user when user service returns error",
+			Name: "Should not update user when user service returns error",
 			WhenRequest: &protocols.HttpRequest{
-				PathParams: map[string]string{
-					"id": "123",
-				},
+				Body: &models.UpdateUserParams{},
 			},
 			BeforeTest: func() error {
-				userServiceMock.On("Get", mock.Anything).Return(nil, fmt.Errorf("user service threw an error"))
+				userServiceMock.On("Update", mock.Anything).Return(nil, fmt.Errorf("user service threw an error"))
 				return nil
 			},
 			ExpectResponse: func(t *testing.T, response *protocols.HttpResponse) error {
@@ -68,9 +73,9 @@ func TestGetUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			AfterTest: func() error {
-				userServiceMock.AssertCalled(t, "Get", "123")
+				userServiceMock.AssertCalled(t, "Update", &models.UpdateUserParams{})
 				userServiceMock.AssertExpectations(t)
-				userServiceMock.On("Get", mock.Anything).Unset()
+				userServiceMock.On("Update", mock.Anything).Unset()
 				return nil
 			},
 		},
@@ -80,7 +85,7 @@ func TestGetUserControllerTestCases(t *testing.T) {
 		t.Run(testCase.Name, func(t *testing.T) {
 			require.NoError(t, testCase.BeforeTest())
 
-			updateUserController := NewGetUserController(
+			updateUserController := NewUpdateUserController(
 				userServiceMock,
 			)
 			request, ok := testCase.WhenRequest.(*protocols.HttpRequest)

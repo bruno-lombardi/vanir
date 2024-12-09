@@ -21,3 +21,14 @@ type DeleteFavoriteParams struct {
 	Reference string
 	UserID    string
 }
+
+type ListUserFavoritesQueryParams struct {
+	UserID string `validate:"required"`
+	Page   int    `query:"page" validate:"required,numeric,min=1"`
+	Limit  int    `query:"limit" validate:"required,max=100,min=1"`
+}
+
+type ListFavoritesResponse struct {
+	Paginated
+	Data []Favorite `json:"data"`
+}

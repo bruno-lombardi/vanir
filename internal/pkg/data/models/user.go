@@ -1,21 +1,23 @@
 package models
 
-import "time"
-
+// @Description User account information
+// @Description with user id and email
 type User struct {
-	ID        string    `json:"id"`
-	Email     string    `json:"email"`
-	Name      string    `json:"name"`
-	Password  string    `json:"-"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        string `json:"id" example:"u_AksOKxc12a"`
+	Email     string `json:"email" example:"bruno.lombardi@email.com"`
+	Name      string `json:"name" example:"Bruno Lombardi"`
+	Password  string `json:"-"`
+	CreatedAt int64  `json:"created_at" example:"1733583441703"`
+	UpdatedAt int64  `json:"updated_at" example:"1733583441710"`
 }
 
+// @Description Create user params information
+// @Description with email, name and password with confirmation
 type CreateUserParams struct {
-	Email                string `json:"email" validate:"email,required,max=255"`
-	Name                 string `json:"name" validate:"required,max=100,min=2"`
-	Password             string `json:"password" validate:"required,max=64,min=6"`
-	PasswordConfirmation string `json:"password_confirmation" validate:"required,max=64,min=6,eqcsfield=Password"`
+	Email                string `json:"email" validate:"email,required,max=255" example:"bruno.lombardi@email.com"`
+	Name                 string `json:"name" validate:"required,max=100,min=2" example:"Bruno Lombardi"`
+	Password             string `json:"password" validate:"required,max=64,min=6" example:"123456"`
+	PasswordConfirmation string `json:"password_confirmation" validate:"required,max=64,min=6,eqcsfield=Password" example:"123456"`
 }
 
 type UpdateUserParams struct {

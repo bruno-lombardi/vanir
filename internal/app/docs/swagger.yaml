@@ -1,0 +1,94 @@
+definitions:
+  models.CreateUserParams:
+    description: Create user params information with email, name and password with
+      confirmation
+    properties:
+      email:
+        example: bruno.lombardi@email.com
+        maxLength: 255
+        type: string
+      name:
+        example: Bruno Lombardi
+        maxLength: 100
+        minLength: 2
+        type: string
+      password:
+        example: "123456"
+        maxLength: 64
+        minLength: 6
+        type: string
+      password_confirmation:
+        example: "123456"
+        maxLength: 64
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - password_confirmation
+    type: object
+  models.User:
+    description: User account information with user id and email
+    properties:
+      created_at:
+        example: 1733583441703
+        type: integer
+      email:
+        example: bruno.lombardi@email.com
+        type: string
+      id:
+        example: u_AksOKxc12a
+        type: string
+      name:
+        example: Bruno Lombardi
+        type: string
+      updated_at:
+        example: 1733583441710
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user with the provided information.
+      parameters:
+      - description: create user params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Create new user
+      tags:
+      - users
+  /v1/users/{id}:
+    get:
+      description: Gets an existent user by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Get a user by its ID
+      tags:
+      - users
+swagger: "2.0"

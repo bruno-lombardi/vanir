@@ -1,10 +1,9 @@
-package middlewares_test
+package middlewares
 
 import (
 	"fmt"
 	"net/http"
 	"testing"
-	"vanir/internal/app/presentation/middlewares"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/protocols"
 	"vanir/test/mocks"
@@ -15,7 +14,7 @@ import (
 
 type AuthMiddlewareSuite struct {
 	suite.Suite
-	authMiddleware *middlewares.AuthenticatedMiddleware
+	authMiddleware *AuthenticatedMiddleware
 	encrypter      *mocks.EncrypterMock
 	userService    *mocks.UserServiceMock
 }
@@ -24,7 +23,7 @@ func (sut *AuthMiddlewareSuite) BeforeTest(_, _ string) {
 	sut.userService = &mocks.UserServiceMock{}
 	sut.encrypter = &mocks.EncrypterMock{}
 
-	sut.authMiddleware = middlewares.NewAuthenticatedMiddleware(sut.encrypter, sut.userService)
+	sut.authMiddleware = NewAuthenticatedMiddleware(sut.encrypter, sut.userService)
 }
 
 func (sut *AuthMiddlewareSuite) AfterTest(_, _ string) {
@@ -33,7 +32,7 @@ func (sut *AuthMiddlewareSuite) AfterTest(_, _ string) {
 }
 
 func (sut *AuthMiddlewareSuite) TestSmokeTest() {
-	sut.NotNil(middlewares.GetAuthenticatedMiddleware(&mocks.EncrypterMock{}, &mocks.UserServiceMock{}))
+	sut.NotNil(GetAuthenticatedMiddleware(&mocks.EncrypterMock{}, &mocks.UserServiceMock{}))
 }
 
 func (sut *AuthMiddlewareSuite) TestShouldNotReturnErrorIfAuthorizationTokenIsValid() {

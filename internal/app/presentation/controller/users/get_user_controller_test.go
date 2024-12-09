@@ -1,19 +1,29 @@
-package user_controllers_test
+package controller
 
 import (
 	"fmt"
 	"net/http"
 	"testing"
-	controllers "vanir/internal/app/presentation/controllers/users"
+	"vanir/internal/pkg/config"
+	"vanir/internal/pkg/data/db"
 	"vanir/internal/pkg/data/models"
 	"vanir/internal/pkg/helpers"
 	"vanir/internal/pkg/protocols"
+	data_test "vanir/test/data"
+	mocks "vanir/test/mocks"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
-func TestRunGetUserControllerTestCases(t *testing.T) {
+type ControllerTestCase data_test.ControllerTestCase
+
+func TestGetUserControllerTestCases(t *testing.T) {
+	config.Setup()
+	db.SetupDB()
+
+	userServiceMock := &mocks.UserServiceMock{}
+
 	controllerTestCases := []ControllerTestCase{
 		{
 			Name: "Should return user when service returns the user with valid id",
@@ -29,10 +39,10 @@ func TestRunGetUserControllerTestCases(t *testing.T) {
 			},
 			ExpectResponse: func(t *testing.T, response *protocols.HttpResponse) error {
 				user, ok := response.Body.(*models.User)
-				assert.True(t, ok)
-				assert.NotNil(t, user.ID)
-				assert.Equal(t, http.StatusOK, response.StatusCode)
-				assert.Equal(t, "bruno@email.com", user.Email)
+				require.True(t, ok)
+				require.NotNil(t, user.ID)
+				require.Equal(t, http.StatusOK, response.StatusCode)
+				require.Equal(t, "bruno@email.com", user.Email)
 				return nil
 			},
 			AfterTest: func() error {
@@ -54,7 +64,7 @@ func TestRunGetUserControllerTestCases(t *testing.T) {
 				return nil
 			},
 			ExpectResponse: func(t *testing.T, response *protocols.HttpResponse) error {
-				assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
+				require.Equal(t, http.StatusInternalServerError, response.StatusCode)
 				return nil
 			},
 			AfterTest: func() error {
@@ -68,18 +78,18 @@ func TestRunGetUserControllerTestCases(t *testing.T) {
 
 	for _, testCase := range controllerTestCases {
 		t.Run(testCase.Name, func(t *testing.T) {
-			assert.NoError(t, testCase.BeforeTest())
+			require.NoError(t, testCase.BeforeTest())
 
-			updateUserController := controllers.NewGetUserController(
+			updateUserController := NewGetUserController(
 				userServiceMock,
 			)
 			request, ok := testCase.WhenRequest.(*protocols.HttpRequest)
-			assert.True(t, ok)
+			require.True(t, ok)
 
 			response, _ := updateUserController.Handle(request)
 
-			assert.NoError(t, testCase.ExpectResponse(t, response))
-			assert.NoError(t, testCase.AfterTest())
+			require.NoError(t, testCase.ExpectResponse(t, response))
+			require.NoError(t, testCase.AfterTest())
 		})
 	}
 }

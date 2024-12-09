@@ -42,14 +42,7 @@ func (u *UserServiceImpl) Create(createUserParams *models.CreateUserParams) (*mo
 	if err != nil {
 		return nil, err
 	} else {
-		return &models.User{
-			ID:        user.ID,
-			Email:     user.Email,
-			Name:      user.Name,
-			Password:  user.Password,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-		}, nil
+		return mapUserToModel(user), nil
 	}
 
 }
@@ -75,26 +68,23 @@ func (u *UserServiceImpl) Update(updateUserParams *models.UpdateUserParams) (*mo
 		return nil, err
 	}
 
-	return &models.User{
-		ID:        user.ID,
-		Email:     user.Email,
-		Name:      user.Name,
-		Password:  user.Password,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-	}, nil
+	return mapUserToModel(user), nil
 
 }
 
 func (u *UserServiceImpl) Get(ID string) (*models.User, error) {
 	user, err := u.userRepository.Get(ID)
 
+	return mapUserToModel(user), err
+}
+
+func mapUserToModel(user *repositories.UserEntity) *models.User {
 	return &models.User{
 		ID:        user.ID,
 		Email:     user.Email,
 		Name:      user.Name,
 		Password:  user.Password,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-	}, err
+		CreatedAt: user.CreatedAt.Unix(),
+		UpdatedAt: user.UpdatedAt.Unix(),
+	}
 }

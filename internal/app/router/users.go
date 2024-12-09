@@ -2,7 +2,7 @@ package router
 
 import (
 	"vanir/internal/app/presentation/adapters"
-	controllers "vanir/internal/app/presentation/controllers/users"
+	controller "vanir/internal/app/presentation/controller/users"
 	"vanir/internal/app/presentation/middlewares"
 	"vanir/internal/pkg/crypto"
 	"vanir/internal/pkg/data/models"
@@ -14,9 +14,9 @@ import (
 
 func SetupUserRoutes(r *echo.Group) {
 	userService := services.GetUserService(repositories.GetUserRepository(), crypto.GetHasher())
-	getUserController := controllers.NewGetUserController(userService)
-	updateUserController := controllers.NewUpdateUserController(userService)
-	createUserController := controllers.NewCreateUserController(userService)
+	getUserController := controller.NewGetUserController(userService)
+	updateUserController := controller.NewUpdateUserController(userService)
+	createUserController := controller.NewCreateUserController(userService)
 	authenticatedMiddleware := middlewares.GetAuthenticatedMiddleware(crypto.GetEncrypter(), userService)
 
 	r.POST("", adapters.AdaptControllerToEchoJSON(

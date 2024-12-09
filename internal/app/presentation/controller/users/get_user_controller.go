@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"net/http"
@@ -16,6 +16,14 @@ func NewGetUserController(userService services.UserService) *GetUserController {
 	}
 }
 
+// GetUserController godoc
+// @Summary Get a user by its ID
+// @Description Gets an existent user by its ID
+// @Tags users
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} models.User
+// @Router /v1/users/{id} [GET]
 func (c *GetUserController) Handle(req *protocols.HttpRequest) (*protocols.HttpResponse, error) {
 	id := req.PathParams["id"]
 

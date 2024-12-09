@@ -2,7 +2,7 @@ package router
 
 import (
 	"vanir/internal/app/presentation/adapters"
-	controllers "vanir/internal/app/presentation/controllers/cryptos"
+	controllers "vanir/internal/app/presentation/controller/cryptos"
 	"vanir/internal/app/presentation/middlewares"
 	"vanir/internal/pkg/crypto"
 	"vanir/internal/pkg/data/http/clients"
